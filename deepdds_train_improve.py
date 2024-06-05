@@ -169,7 +169,7 @@ def run(params):
     # Train. Iterate over epochs.
     # -----------------------------
     random_num = random.sample(range(0, lenth), lenth)
-    for i in range(5):
+    for i in range(1):
         test_num = random_num[pot*i:pot*(i+1)]
         train_num = random_num[:pot*i] + random_num[pot*(i+1):]
 
