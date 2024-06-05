@@ -188,6 +188,7 @@ def run(params):
         drug2_loader_test = DataLoader(drug2_data_test, batch_size=TRAIN_BATCH_SIZE, shuffle=None)
 
         model = modeling().to(device)
+        global loss_fn
         loss_fn = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
