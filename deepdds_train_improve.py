@@ -47,7 +47,12 @@ app_train_params = []
 model_train_params = []
 train_params = app_train_params + model_train_params
 # ---------------------
-
+modeling = GCNNet
+TRAIN_BATCH_SIZE = 256
+TEST_BATCH_SIZE = 256
+LR = 0.0005
+LOG_INTERVAL = 20
+NUM_EPOCHS = 1000
 # [Req] List of metrics names to compute prediction performance scores
 metrics_list = ["mse", "rmse", "pcc", "scc", "r2"] 
 # or
@@ -113,12 +118,7 @@ def split_dataset(dataset, ratio):
 
 # [Req]
 def run(params):
-    modeling = GCNNet
-    TRAIN_BATCH_SIZE = 256
-    TEST_BATCH_SIZE = 256
-    LR = 0.0005
-    LOG_INTERVAL = 20
-    NUM_EPOCHS = 1000
+
 
     print('Learning rate: ', LR)
     print('Epochs: ', NUM_EPOCHS)
