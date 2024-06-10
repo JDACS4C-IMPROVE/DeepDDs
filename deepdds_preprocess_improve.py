@@ -206,10 +206,10 @@ def run(params: Dict):
     drug2_train_path = params["ml_data_outdir"] + "/" + "drug2_train.pt"
     drug2_test_path = params["ml_data_outdir"] + "/" + "drug2_test.pt"
 
-    torch.save(drug1_loader_train, drug1_train_path)
-    torch.save(drug1_loader_test, drug1_test_path)
-    torch.save(drug2_loader_train, drug2_train_path)
-    torch.save(drug2_loader_test, drug2_test_path)
+    torch.save(drug1_data_train, drug1_train_path)
+    torch.save(drug1_data_test, drug1_test_path)
+    torch.save(drug2_data_train, drug2_train_path)
+    torch.save(drug2_data_test, drug2_test_path)
 
     # ------------------------------------------------------
     # [Req] Create data names for ML data
