@@ -26,6 +26,13 @@ from rdkit import Chem
 # from rdkit.Chem import MolFromSmiles
 import networkx as nx
 from utils_test import *
+import random
+from random import shuffle
+import torch.utils.data as Data
+import torch
+import torch.nn.functional as F
+import torch.nn as nn
+from torch.utils.data import TensorDataset, Dataset
 
 filepath = Path(__file__).resolve().parent # [Req]
 
@@ -37,6 +44,11 @@ filepath = Path(__file__).resolve().parent # [Req]
 # 2. model_preproc_params
 app_preproc_params = []
 model_preproc_params = [
+    {"name": "learning_rate",
+     "type": float,
+     "default": 0.0005,
+     "help": "learning rate",
+    },
     {"name": "datasets",
      "type": str,
      "default": "ALMANAC",
@@ -102,9 +114,29 @@ def smile_to_graph(smile):
     return c_size, features, edge_index
 
 
+# [Req]
+def run(params: Dict):
+    # ------------------------------------------------------
+    # [Req] Build paths and create output dir
+    # ------------------------------------------------------
+    params = frm.build_paths(params)  
 
-def creat_data(datafile, cellfile):
-    file2 = cellfile
+    frm.create_outdir(outdir=params["ml_data_outdir"])
+
+    # ------------------------------------------------------
+    # Load X data (feature representations)
+    # ------------------------------------------------------
+
+    # ------------------------------------------------------
+    # Load Y data 
+    # ------------------------------------------------------
+
+
+
+
+    file2 = 'data/independent_set/independent_cell_features_954.csv'
+    datafile = ['new_labels_0_10']
+    #file2 = cellfile
     cell_features = []
     with open(file2) as csvfile:
         csv_reader = csv.reader(csvfile)  # 使用csv.reader读取csvfile中的文件
@@ -134,92 +166,72 @@ def creat_data(datafile, cellfile):
         drug1, drug2, cell, label = np.asarray(drug1), np.asarray(drug2), np.asarray(cell), np.asarray(label)
         # make data PyTorch Geometric ready
 
-        print('开始创建数据')
+        print('开始创建数据 - Start creating data')
         TestbedDataset(root='data', dataset=datafile + '_drug1', xd=drug1, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
         TestbedDataset(root='data', dataset=datafile + '_drug2', xd=drug2, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-        print('创建数据成功')
+        print('创建数据成功 - Data created successfully')
         print('preparing ', datasets + '_.pt in pytorch format!')
-    #
-    #     print(processed_data_file_train, ' have been created')
-    #
-    # else:
-    #     print(processed_data_file_train, ' are already created')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# [Req]
-def run(params: Dict):
-    # ------------------------------------------------------
-    # [Req] Build paths and create output dir
-    # ------------------------------------------------------
-    params = frm.build_paths(params)  
-
-    frm.create_outdir(outdir=params["ml_data_outdir"])
-
-    # ------------------------------------------------------
-    # Load X data (feature representations)
-    # ------------------------------------------------------
-
-    # ------------------------------------------------------
-    # Load Y data 
-    # ------------------------------------------------------
-
-
-
-
-    cellfile = 'data/independent_set/independent_cell_features_954.csv'
-    da = ['new_labels_0_10']
-    for datafile in da:
-        creat_data(datafile, cellfile)
-
-
-
-
-
-
-
-
-
 
 
     # ------------------------------------------------------
     # Construct ML data for every stage (train, val, test)
     # ------------------------------------------------------
 
+    drug1_data = TestbedDataset(root='data', dataset=datafile + '_drug1')
+    drug2_data = TestbedDataset(root='data', dataset=datafile + '_drug2')
+
+    lenth = len(drug1_data)
+    pot = int(lenth/5)
+    print('lenth', lenth)
+    print('pot', pot)
+
+    random_num = random.sample(range(0, lenth), lenth)
+    #for i in range(1):
+    i=0
+    test_num = random_num[pot*i:pot*(i+1)]
+    train_num = random_num[:pot*i] + random_num[pot*(i+1):]
+
+    drug1_data_train = drug1_data[train_num]
+    drug1_data_test = drug1_data[test_num]
+    drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
+    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["batch_size"], shuffle=None)
+    drug2_data_test = drug2_data[test_num]
+    drug2_data_train = drug2_data[train_num]
+    drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
+    drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
+
+    drug1_train_path = params["ml_data_outdir"] + "/" + "drug1_train.pt"
+    drug1_test_path = params["ml_data_outdir"] + "/" + "drug1_test.pt"
+    drug2_train_path = params["ml_data_outdir"] + "/" + "drug2_train.pt"
+    drug2_test_path = params["ml_data_outdir"] + "/" + "drug2_test.pt"
+
+    torch.save(drug1_loader_train, drug1_train_path)
+    torch.save(drug1_loader_test, drug1_test_path)
+    torch.save(drug2_loader_train, drug2_train_path)
+    torch.save(drug2_loader_test, drug2_test_path)
+
     # ------------------------------------------------------
     # [Req] Create data names for ML data
     # ------------------------------------------------------
-    train_data_fname = frm.build_ml_data_name(params, stage="train")  # [Req]
-    val_data_fname = frm.build_ml_data_name(params, stage="val")  # [Req]
-    test_data_fname = frm.build_ml_data_name(params, stage="test")  # [Req]
+    #train_data_fname = frm.build_ml_data_name(params, stage="train")  # [Req]
+    #val_data_fname = frm.build_ml_data_name(params, stage="val")  # [Req]
+    #test_data_fname = frm.build_ml_data_name(params, stage="test")  # [Req]
 
-    train_data_path = params["ml_data_outdir"] + "/" + train_data_fname
-    val_data_path = params["ml_data_outdir"] + "/" + val_data_fname
-    test_data_path = params["ml_data_outdir"] + "/" + test_data_fname
+    #train_data_path = params["ml_data_outdir"] + "/" + train_data_fname
+    #val_data_path = params["ml_data_outdir"] + "/" + val_data_fname
+    #test_data_path = params["ml_data_outdir"] + "/" + test_data_fname
 
     # ------------------------------------------------------
     # Save ML data
     # ------------------------------------------------------
-    with open(train_data_path, 'wb+') as f:
-        pickle.dump(train_data, f, protocol=4)
+    #with open(train_data_path, 'wb+') as f:
+    #    pickle.dump(train_data, f, protocol=4)
 
-    with open(val_data_path, 'wb+') as f:
-        pickle.dump(val_data, f, protocol=4)
+    #with open(val_data_path, 'wb+') as f:
+    #    pickle.dump(val_data, f, protocol=4)
     
-    with open(test_data_path, 'wb+') as f:
-        pickle.dump(test_data, f, protocol=4)
+    #with open(test_data_path, 'wb+') as f:
+    #    pickle.dump(test_data, f, protocol=4)
    
 
     return params["ml_data_outdir"]
