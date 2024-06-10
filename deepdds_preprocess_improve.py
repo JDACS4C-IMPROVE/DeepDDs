@@ -33,7 +33,7 @@ import torch
 import torch.nn.functional as F
 import torch.nn as nn
 from torch.utils.data import TensorDataset, Dataset
-import torch_geometric.data.Data
+import torch_geometric.deprecation
 
 filepath = Path(__file__).resolve().parent # [Req]
 
