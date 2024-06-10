@@ -194,9 +194,9 @@ def run(params):
     optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
 
 
-    model_file_name = 'data/result/GCNNet(DrugA_DrugB)' + str(i) + '--model_' + datafile +  '.model'
-    result_file_name = 'data/result/GCNNet(DrugA_DrugB)' + str(i) + '--result_' + datafile +  '.csv'
-    file_AUCs = 'data/result/GCNNet(DrugA_DrugB)' + str(i) + '--AUCs--' + datafile + '.txt'
+    model_file_name = 'data/result/GCNNet(DrugA_DrugB)' + '--model_' + datafile +  '.model'
+    result_file_name = 'data/result/GCNNet(DrugA_DrugB)' + '--result_' + datafile +  '.csv'
+    file_AUCs = 'data/result/GCNNet(DrugA_DrugB)' + '--AUCs--' + datafile + '.txt'
     AUCs = ('Epoch\tAUC_dev\tPR_AUC\tACC\tBACC\tPREC\tTPR\tKAPPA\tRECALL')
     with open(file_AUCs, 'w') as f:
         f.write(AUCs + '\n')
