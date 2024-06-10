@@ -135,7 +135,7 @@ def run(params: Dict):
 
 
     file2 = 'data/independent_set/independent_cell_features_954.csv'
-    datafile = ['new_labels_0_10']
+    datafile = 'new_labels_0_10'
     #file2 = cellfile
     cell_features = []
     with open(file2) as csvfile:
@@ -156,7 +156,7 @@ def run(params: Dict):
         g = smile_to_graph(smile)
         smile_graph[smile] = g
 
-    datasets = datafile[0]
+    datasets = datafile
     # convert to PyTorch data format
     processed_data_file_train = 'data/processed/' + datasets + '_train.pt'
 
