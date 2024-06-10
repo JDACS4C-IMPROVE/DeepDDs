@@ -156,7 +156,7 @@ def run(params: Dict):
         g = smile_to_graph(smile)
         smile_graph[smile] = g
 
-    datasets = datafile
+    datasets = datafile[0]
     # convert to PyTorch data format
     processed_data_file_train = 'data/processed/' + datasets + '_train.pt'
 
