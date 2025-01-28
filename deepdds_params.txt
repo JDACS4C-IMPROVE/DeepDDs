@@ -10,8 +10,8 @@ output_dir = ./testing_preprocess
 
 [Train]
 #data_format = .pt
-#model_file_name = model
-#model_file_format = .pt
+model_file_name = model
+model_file_format = .pt
 #epochs = 50
 #batch_size = 256
 #val_batch = 256
@@ -27,8 +27,8 @@ output_dir = ./testing_train
 
 [Infer]
 #data_format = .pt
-#model_file_name = model
-#model_file_format = .pt
+model_file_name = model
+model_file_format = .pt
 #infer_batch = 256
 calc_infer_scores = True
 input_data_dir = ./testing_preprocess

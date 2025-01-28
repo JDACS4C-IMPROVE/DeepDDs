@@ -130,6 +130,8 @@ def run(params):
 
     train_data_path = params["input_dir"] + "/" + train_data_fname
     val_data_path = params["input_dir"] + "/" + val_data_fname
+
+
     
     # ------------------------------------------------------
     # CUDA/CPU device
@@ -143,17 +145,6 @@ def run(params):
     # ------------------------------------------------------
     # Load data
     # ------------------------------------------------------
-  
-    # ------------------------------------------------------
-    # Prepare model
-    # ------------------------------------------------------
-
-    # -----------------------------
-    # Train. Iterate over epochs.
-    # -----------------------------
-
-
-    
 
     drug1_train_path = params["input_dir"] + "/" + "drug1_train.pt"
     drug1_test_path = params["input_dir"] + "/" + "drug1_test.pt"
@@ -176,7 +167,10 @@ def run(params):
     drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
 
     print("data load")
-
+  
+    # ------------------------------------------------------
+    # Prepare model
+    # ------------------------------------------------------
     model = modeling().to(device)
     global loss_fn
     loss_fn = nn.CrossEntropyLoss()
@@ -189,6 +183,9 @@ def run(params):
     AUCs = ('Epoch\tAUC_dev\tPR_AUC\tACC\tBACC\tPREC\tTPR\tKAPPA\tRECALL')
     with open(file_AUCs, 'w') as f:
         f.write(AUCs + '\n')
+    # -----------------------------
+    # Train. Iterate over epochs.
+    # -----------------------------
 
     best_auc = 0
     for epoch in range(params["epochs"]):
@@ -221,10 +218,18 @@ def run(params):
     # -----------------------------
     # Save model
     # -----------------------------
-
+    torch.save(model, modelpath)
     # ------------------------------------------------------
     # Load best model and compute predictions
     # ------------------------------------------------------
+    best_model = torch.load(modelpath, weights_only=False)
+    T, S, Y = predicting(model, device, drug1_loader_test, drug2_loader_test)
+        # T is correct label
+        # S is predict score
+        # Y is predict label
+    print("T:", T)
+    print("S:", S)
+    print("Y:", Y)
 
     # ------------------------------------------------------
     # [Req] Save raw predictions in dataframe
