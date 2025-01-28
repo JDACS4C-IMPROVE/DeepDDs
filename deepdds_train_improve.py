@@ -160,11 +160,11 @@ def run(params):
     #drug1_data_train = drug1_data[train_num]
     #drug1_data_test = drug1_data[test_num]
     drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
-    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["batch_size"], shuffle=None)
+    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["val_batch"], shuffle=None)
     #drug2_data_test = drug2_data[test_num]
     #drug2_data_train = drug2_data[train_num]
     drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
-    drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
+    drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["val_batch"], shuffle=None)
 
     print("data load")
   

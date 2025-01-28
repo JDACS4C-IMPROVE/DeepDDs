@@ -38,8 +38,8 @@ def run(params):
     drug2_test_path = params["input_data_dir"] + "/" + "drug2_test.pt"
     drug1_data_test = torch.load(drug1_test_path)
     drug2_data_test = torch.load(drug2_test_path)
-    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["batch_size"], shuffle=None)
-    drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
+    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["infer_batch"], shuffle=None)
+    drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["infer_batch"], shuffle=None)
 
     # --------------------------------------------------------------------
     # CUDA/CPU device, as needed
