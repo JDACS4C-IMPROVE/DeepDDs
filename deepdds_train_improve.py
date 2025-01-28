@@ -223,7 +223,7 @@ def run(params):
     # Load best model and compute predictions
     # ------------------------------------------------------
     best_model = torch.load(modelpath, weights_only=False)
-    T, S, Y = predicting(model, device, drug1_loader_test, drug2_loader_test)
+    T, S, Y = predicting(best_model, device, drug1_loader_test, drug2_loader_test)
         # T is correct label
         # S is predict score
         # Y is predict label
