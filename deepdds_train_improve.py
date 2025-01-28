@@ -114,15 +114,8 @@ def run(params):
     print('Learning rate: ', params["learning_rate"])
     print('Epochs: ', params["epochs"])
     datafile = 'new_labels_0_10'
-    # ------------------------------------------------------
-    # [Req] Create output dir and build model path
-    # ------------------------------------------------------
-    # Create output dir for trained model, val set predictions, val set
-    # performance scores
-    frm.create_outdir(outdir=params["model_outdir"])
 
-    # Build model path
-    modelpath = frm.build_model_path(params, model_dir=params["model_outdir"])
+
 
     # ------------------------------------------------------
     # [Req] Create data names for train and val sets
