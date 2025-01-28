@@ -5,16 +5,20 @@ import sys
 from pathlib import Path
 from typing import Dict
 
-import numpy as np
-import pandas as pd
+# [Req] IMPROVE imports
+from improvelib.applications.drug_response_prediction.config import DRPTrainConfig
+from improvelib.utils import str2bool
+import improvelib.utils as frm
+from improvelib.metrics import compute_metrics
+from model_params_def import train_params
 
 
-# [Req] IMPROVE/CANDLE imports
-from improve import framework as frm
-from improve.metrics import compute_metrics
+
 
 # Model-specific imports
 import random
+import numpy as np
+import pandas as pd
 from random import shuffle
 import torch.utils.data as Data
 import torch
@@ -32,20 +36,10 @@ from sklearn import metrics
 from sklearn.model_selection import StratifiedKFold, KFold
 
 
-# [Req] Imports from preprocess script
-from deepdds_preprocess_improve import preprocess_params
 
 filepath = Path(__file__).resolve().parent # [Req]
 
-# ---------------------
-# [Req] Parameter lists
-# ---------------------
-# Two parameter lists are required:
-# 1. app_train_params
-# 2. model_train_params
-app_train_params = []
-model_train_params = []
-train_params = app_train_params + model_train_params
+
 # ---------------------
 modeling = GCNNet
 #TRAIN_BATCH_SIZE = 256
@@ -53,10 +47,7 @@ modeling = GCNNet
 #LR = 0.0005
 #LOG_INTERVAL = 20
 #NUM_EPOCHS = 1000
-# [Req] List of metrics names to compute prediction performance scores
-#metrics_list = ["mse", "rmse", "pcc", "scc", "r2"] 
-# or
-metrics_list = ["mse", "acc", "recall", "precision", "f1", "auc", "aupr"]
+
 # training function at each epoch
 def train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch):
     print('Training on {} samples...'.format(len(drug1_loader_train.dataset)))
@@ -139,8 +130,8 @@ def run(params):
     train_data_fname = frm.build_ml_data_name(params, stage="train")  # [Req]
     val_data_fname = frm.build_ml_data_name(params, stage="val")  # [Req]
 
-    train_data_path = params["ml_data_outdir"] + "/" + train_data_fname
-    val_data_path = params["ml_data_outdir"] + "/" + val_data_fname
+    train_data_path = params["input_dir"] + "/" + train_data_fname
+    val_data_path = params["input_dir"] + "/" + val_data_fname
     
     # ------------------------------------------------------
     # CUDA/CPU device
@@ -166,10 +157,10 @@ def run(params):
 
     
 
-    drug1_train_path = params["ml_data_outdir"] + "/" + "drug1_train.pt"
-    drug1_test_path = params["ml_data_outdir"] + "/" + "drug1_test.pt"
-    drug2_train_path = params["ml_data_outdir"] + "/" + "drug2_train.pt"
-    drug2_test_path = params["ml_data_outdir"] + "/" + "drug2_test.pt"
+    drug1_train_path = params["input_dir"] + "/" + "drug1_train.pt"
+    drug1_test_path = params["input_dir"] + "/" + "drug1_test.pt"
+    drug2_train_path = params["input_dir"] + "/" + "drug2_train.pt"
+    drug2_test_path = params["input_dir"] + "/" + "drug2_test.pt"
     drug1_data_train = torch.load(drug1_train_path)
     drug1_data_test = torch.load(drug1_test_path)
     drug2_data_train = torch.load(drug2_train_path)
@@ -241,19 +232,26 @@ def run(params):
     # [Req] Save raw predictions in dataframe
     # ------------------------------------------------------
     frm.store_predictions_df(
-        params,
-        y_true=val_true, y_pred=val_pred, stage="val",
-        outdir=params["model_outdir"]
+        y_true=val_true,
+        y_pred=val_pred,
+        stage="val",
+        y_col_name=params["y_col_name"],
+        output_dir=params["output_dir"],
+        input_dir=params["input_dir"]
     )
+
 
     # ------------------------------------------------------
     # [Req] Compute performance scores
     # ------------------------------------------------------
-    val_scores = frm.compute_performace_scores(
-        params,
-        y_true=val_true, y_pred=val_pred, stage="val",
-        outdir=params["model_outdir"], metrics=metrics_list
+    val_scores = frm.compute_performance_scores(
+        y_true=val_true,
+        y_pred=val_pred,
+        stage="val",
+        metric_type=params["metric_type"],
+        output_dir=params["output_dir"]
     )
+
 
     return val_scores
 
@@ -262,13 +260,11 @@ def run(params):
 
 # [Req]
 def main(args):
-    additional_definitions = preprocess_params + train_params
-    params = frm.initialize_parameters(
-        filepath,
-        default_model="params.txt",
-        additional_definitions=additional_definitions,
-        required=None,
-    )
+    cfg = DRPTrainConfig()
+    params = cfg.initialize_parameters(
+        pathToModelDir=filepath,
+        default_config="deepdds_params.txt",
+        additional_definitions=train_params)
     val_scores = run(params)
     print("\nFinished training model.")
 

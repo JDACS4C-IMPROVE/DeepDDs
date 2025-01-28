@@ -4,19 +4,15 @@
 import sys
 from pathlib import Path
 from typing import Dict
-
-import numpy as np
-import pandas as pd
-import joblib
-
-# [Req] IMPROVE/CANDLE imports
-from improve import framework as frm
-from improve import drug_resp_pred as drp
+# [Req] Core improvelib imports
+from improvelib.applications.drug_response_prediction.config import DRPPreprocessConfig
+from improvelib.utils import str2bool
+import improvelib.utils as frm
 
 # Model-specific imports
 import csv
 from itertools import islice
-
+import joblib
 import pandas as pd
 import numpy as np
 import os
@@ -35,32 +31,8 @@ import torch.nn as nn
 from torch.utils.data import TensorDataset, Dataset
 import torch_geometric.deprecation
 
+from model_params_def import preprocess_params
 filepath = Path(__file__).resolve().parent # [Req]
-
-# ---------------------
-# [Req] Parameter lists
-# ---------------------
-# Two parameter lists are required:
-# 1. app_preproc_params
-# 2. model_preproc_params
-app_preproc_params = []
-model_preproc_params = [
-    {"name": "learning_rate",
-     "type": float,
-     "default": 0.0005,
-     "help": "learning rate",
-    },
-    {"name": "datasets",
-     "type": str,
-     "default": "ALMANAC",
-     "help": "datasets to use",
-    },
-]
-
-# Combine the two lists (the combined parameter list will be passed to
-# frm.initialize_parameters() in the main().
-preprocess_params = app_preproc_params + model_preproc_params
-# ---------------------
 
 
 
@@ -117,12 +89,7 @@ def smile_to_graph(smile):
 
 # [Req]
 def run(params: Dict):
-    # ------------------------------------------------------
-    # [Req] Build paths and create output dir
-    # ------------------------------------------------------
-    params = frm.build_paths(params)  
 
-    frm.create_outdir(outdir=params["ml_data_outdir"])
 
     # ------------------------------------------------------
     # Load X data (feature representations)
@@ -201,10 +168,10 @@ def run(params: Dict):
     #drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
     #drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
 
-    drug1_train_path = params["ml_data_outdir"] + "/" + "drug1_train.pt"
-    drug1_test_path = params["ml_data_outdir"] + "/" + "drug1_test.pt"
-    drug2_train_path = params["ml_data_outdir"] + "/" + "drug2_train.pt"
-    drug2_test_path = params["ml_data_outdir"] + "/" + "drug2_test.pt"
+    drug1_train_path = params["output_dir"] + "/" + "drug1_train.pt"
+    drug1_test_path = params["output_dir"] + "/" + "drug1_test.pt"
+    drug2_train_path = params["output_dir"] + "/" + "drug2_train.pt"
+    drug2_test_path = params["output_dir"] + "/" + "drug2_test.pt"
 
     torch.save(drug1_data_train, drug1_train_path)
     torch.save(drug1_data_test, drug1_test_path)
@@ -235,18 +202,16 @@ def run(params: Dict):
     #    pickle.dump(test_data, f, protocol=4)
    
 
-    return params["ml_data_outdir"]
+    return params["output_dir"]
 
 
 # [Req]
 def main(args):
-    additional_definitions = preprocess_params
-    params = frm.initialize_parameters(
-        filepath,
-        default_model="params.txt",
-        additional_definitions=additional_definitions,
-        required=None,
-    )
+    cfg = DRPPreprocessConfig()
+    params = cfg.initialize_parameters(
+        pathToModelDir=filepath,
+        default_config="deepdds_params.txt",
+        additional_definitions=preprocess_params)
     ml_data_outdir = run(params)
     print("\nFinished data preprocessing.")
 
