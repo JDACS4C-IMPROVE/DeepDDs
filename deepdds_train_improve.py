@@ -215,10 +215,11 @@ def run(params):
             best_auc = AUC
             print(best_auc)
             save_AUCs(AUCs, file_AUCs)
+            torch.save(model, modelpath)
     # -----------------------------
     # Save model
     # -----------------------------
-    torch.save(model, modelpath)
+    
     # ------------------------------------------------------
     # Load best model and compute predictions
     # ------------------------------------------------------
