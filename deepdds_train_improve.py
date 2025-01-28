@@ -235,8 +235,8 @@ def run(params):
     # [Req] Save raw predictions in dataframe
     # ------------------------------------------------------
     frm.store_predictions_df(
-        y_true=val_true,
-        y_pred=val_pred,
+        y_true=T,
+        y_pred=Y,
         stage="val",
         y_col_name=params["y_col_name"],
         output_dir=params["output_dir"],
@@ -248,8 +248,8 @@ def run(params):
     # [Req] Compute performance scores
     # ------------------------------------------------------
     val_scores = frm.compute_performance_scores(
-        y_true=val_true,
-        y_pred=val_pred,
+        y_true=T,
+        y_pred=Y,
         stage="val",
         metric_type=params["metric_type"],
         output_dir=params["output_dir"]
