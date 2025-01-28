@@ -75,9 +75,11 @@ class TestbedDataset(InMemoryDataset):
                                 y=torch.Tensor([labels]))
             cell = self.get_cell_feature(target, xt_featrue)
 
-            if cell == False : # 如果读取cell失败则中断程序
-                print('cell', cell)
-                sys.exit()
+            #if cell == False : # 如果读取cell失败则中断程序 - If reading the cell fails, interrupt the program
+            #    
+            #    sys.exit()
+            # this normally returns an array and throws and error
+            print('cell', cell)
 
             new_cell = []
             # print('cell_feature', cell_feature)
