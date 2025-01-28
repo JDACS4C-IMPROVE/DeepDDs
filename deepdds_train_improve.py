@@ -117,11 +117,16 @@ def run(params):
 
 
 
-    # ------------------------------------------------------
-    # [Req] Create data names for train and val sets
-    # ------------------------------------------------------
-    train_data_fname = frm.build_ml_data_name(params, stage="train")  # [Req]
-    val_data_fname = frm.build_ml_data_name(params, stage="val")  # [Req]
+    # --------------------------------------------------------------------
+    # [Req] Create data names for train/val sets and build model path
+    # --------------------------------------------------------------------
+    train_data_fname = frm.build_ml_data_file_name(data_format=params["data_format"], stage="train")  # [Req]
+    val_data_fname = frm.build_ml_data_file_name(data_format=params["data_format"], stage="val")  # [Req]
+
+    modelpath = frm.build_model_path(
+        model_file_name=params["model_file_name"],
+        model_file_format=params["model_file_format"],
+        model_dir=params["output_dir"])
 
     train_data_path = params["input_dir"] + "/" + train_data_fname
     val_data_path = params["input_dir"] + "/" + val_data_fname
