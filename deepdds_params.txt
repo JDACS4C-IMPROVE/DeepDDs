@@ -23,6 +23,7 @@ batch_size = 256
 epochs = 2
 input_dir = ./testing_preprocess
 output_dir = ./testing_train
+metric_type = classification
 
 
 [Infer]
@@ -34,3 +35,4 @@ calc_infer_scores = True
 input_data_dir = ./testing_preprocess
 input_model_dir = ./testing_train
 output_dir = ./testing_infer
+metric_type = classification
