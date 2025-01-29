@@ -194,34 +194,38 @@ def run(params):
     # -----------------------------
 
     best_auc = 0
+    early_stop = 0
     for epoch in range(params["epochs"]):
-        train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch + 1)
-        T, S, Y = predicting(model, device, drug1_loader_test, drug2_loader_test)
-        # T is correct label
-        # S is predict score
-        # Y is predict label
+        if early_stop < params["patience"]:
+            train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch + 1)
+            T, S, Y = predicting(model, device, drug1_loader_test, drug2_loader_test)
+            # T is correct label
+            # S is predict score
+            # Y is predict label
 
-        # compute preformence
-        AUC = roc_auc_score(T, S)
-        precision, recall, threshold = metrics.precision_recall_curve(T, S)
-        PR_AUC = metrics.auc(recall, precision)
-        BACC = balanced_accuracy_score(T, Y)
-        tn, fp, fn, tp = confusion_matrix(T, Y).ravel()
-        TPR = tp / (tp + fn)
-        PREC = precision_score(T, Y)
-        ACC = accuracy_score(T, Y)
-        KAPPA = cohen_kappa_score(T, Y)
-        recall = recall_score(T, Y)
+            # compute preformence
+            AUC = roc_auc_score(T, S)
+            precision, recall, threshold = metrics.precision_recall_curve(T, S)
+            PR_AUC = metrics.auc(recall, precision)
+            BACC = balanced_accuracy_score(T, Y)
+            tn, fp, fn, tp = confusion_matrix(T, Y).ravel()
+            TPR = tp / (tp + fn)
+            PREC = precision_score(T, Y)
+            ACC = accuracy_score(T, Y)
+            KAPPA = cohen_kappa_score(T, Y)
+            recall = recall_score(T, Y)
 
-        # save data
-        AUCs = [epoch, AUC, PR_AUC, ACC, BACC, PREC, TPR, KAPPA, recall]
-        #save_AUCs(AUCs, file_AUCs)
-        ret = [rmse(T, S), mse(T, S), pearson(T, S), spearman(T, S), ci(T, S)]
-        if best_auc < AUC:
-            best_auc = AUC
-            print(best_auc)
-            save_AUCs(AUCs, file_AUCs)
-            torch.save(model, modelpath)
+            # save data
+            AUCs = [epoch, AUC, PR_AUC, ACC, BACC, PREC, TPR, KAPPA, recall]
+            #save_AUCs(AUCs, file_AUCs)
+            ret = [rmse(T, S), mse(T, S), pearson(T, S), spearman(T, S), ci(T, S)]
+            if best_auc < AUC:
+                best_auc = AUC
+                print(best_auc)
+                save_AUCs(AUCs, file_AUCs)
+                torch.save(model, modelpath)
+                early_stop = 0
+            early_stop = early_stop + 1
     # -----------------------------
     # Save model
     # -----------------------------
