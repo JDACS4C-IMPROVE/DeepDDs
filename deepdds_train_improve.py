@@ -42,17 +42,10 @@ filepath = Path(__file__).resolve().parent # [Req]
 
 # ---------------------
 modeling = GCNNet
-#TRAIN_BATCH_SIZE = 256
-#TEST_BATCH_SIZE = 256
-#LR = 0.0005
-#LOG_INTERVAL = 20
-#NUM_EPOCHS = 1000
 
-# training function at each epoch
 def train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch):
     print('Training on {} samples...'.format(len(drug1_loader_train.dataset)))
     model.train()
-    # train_loader = np.array(train_loader)
     for batch_idx, data in enumerate(zip(drug1_loader_train, drug2_loader_train)):
         data1 = data[0]
         data2 = data[1]
@@ -109,14 +102,6 @@ def split_dataset(dataset, ratio):
 
 # [Req]
 def run(params):
-
-
-    print('Learning rate: ', params["learning_rate"])
-    print('Epochs: ', params["epochs"])
-    datafile = 'new_labels_0_10'
-
-
-
     # --------------------------------------------------------------------
     # [Req] Create data names for train/val sets and build model path
     # --------------------------------------------------------------------
@@ -146,30 +131,17 @@ def run(params):
     # Load data
     # ------------------------------------------------------
 
-    #drug1_train_path = params["input_dir"] + "/processed/" + "drug1_train.pt"
-    #drug1_test_path = params["input_dir"] + "/processed/" + "drug1_test.pt"
-    #drug2_train_path = params["input_dir"] + "/processed/" + "drug2_train.pt"
-    #drug2_test_path = params["input_dir"] + "/processed/" + "drug2_test.pt"
-    #drug1_data_train = torch.load(drug1_train_path)
-    #drug1_data_test = torch.load(drug1_test_path)
-    #drug2_data_train = torch.load(drug2_train_path)
-    #drug2_data_test = torch.load(drug2_test_path)
 
     drug1_data_train = TestbedDataset(root=params['input_dir'], dataset='drug1_train')
     drug2_data_train = TestbedDataset(root=params['input_dir'], dataset='drug2_train')
     drug1_data_test = TestbedDataset(root=params['input_dir'], dataset='drug1_test')
     drug2_data_test = TestbedDataset(root=params['input_dir'], dataset='drug2_test')
     
-
     print("torch load")
 
-    #drug1_data_train = drug1_data[train_num]
-    #drug1_data_test = drug1_data[test_num]
     drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
-    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["val_batch"], shuffle=None)
-    #drug2_data_test = drug2_data[test_num]
-    #drug2_data_train = drug2_data[train_num]
     drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
+    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["val_batch"], shuffle=None)
     drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["val_batch"], shuffle=None)
 
     print("data load")
@@ -182,9 +154,6 @@ def run(params):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
 
-
-    model_file_name = 'data/result/GCNNet(DrugA_DrugB)' + '--model_' + datafile +  '.model'
-    result_file_name = 'data/result/GCNNet(DrugA_DrugB)' + '--result_' + datafile +  '.csv'
     file_AUCs = params['output_dir'] + "/AUCs.txt"
     AUCs = ('Epoch\tAUC_dev\tPR_AUC\tACC\tBACC\tPREC\tTPR\tKAPPA\tRECALL')
     with open(file_AUCs, 'w') as f:
@@ -214,21 +183,17 @@ def run(params):
             ACC = accuracy_score(T, Y)
             KAPPA = cohen_kappa_score(T, Y)
             recall = recall_score(T, Y)
-
-            # save data
             AUCs = [epoch, AUC, PR_AUC, ACC, BACC, PREC, TPR, KAPPA, recall]
-            #save_AUCs(AUCs, file_AUCs)
-            ret = [rmse(T, S), mse(T, S), pearson(T, S), spearman(T, S), ci(T, S)]
+
+            early_stop = early_stop + 1
             if best_auc < AUC:
                 best_auc = AUC
-                print(best_auc)
+                print("AUC improved to:", best_auc)
                 save_AUCs(AUCs, file_AUCs)
                 torch.save(model, modelpath)
                 early_stop = 0
-            early_stop = early_stop + 1
-    # -----------------------------
-    # Save model
-    # -----------------------------
+            print(early_stop, "epochs since last improvement out of", params['patience'])
+
     
     # ------------------------------------------------------
     # Load best model and compute predictions
@@ -238,9 +203,7 @@ def run(params):
         # T is correct label
         # S is predict score
         # Y is predict label
-    print("T:", T)
-    print("S:", S)
-    print("Y:", Y)
+
 
     # ------------------------------------------------------
     # [Req] Save raw predictions in dataframe
@@ -263,7 +226,8 @@ def run(params):
         y_pred=Y,
         stage="val",
         metric_type=params["metric_type"],
-        output_dir=params["output_dir"]
+        output_dir=params["output_dir"],
+        y_prob=S
     )
 
 

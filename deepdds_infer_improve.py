@@ -14,6 +14,7 @@ from model_params_def import infer_params
 from deepdds_train_improve import predicting
 from utils_test import DataLoader
 import torch
+from utils_test import TestbedDataset
 
 filepath = Path(__file__).resolve().parent # [Req]
 
@@ -34,10 +35,8 @@ def run(params):
     # --------------------------------------------------------------------
 
     # original model only has train and test, so reusing test data for both val and test
-    drug1_test_path = params["input_data_dir"] + "/" + "drug1_test.pt"
-    drug2_test_path = params["input_data_dir"] + "/" + "drug2_test.pt"
-    drug1_data_test = torch.load(drug1_test_path)
-    drug2_data_test = torch.load(drug2_test_path)
+    drug1_data_test = TestbedDataset(root=params['input_data_dir'], dataset='drug1_test')
+    drug2_data_test = TestbedDataset(root=params['input_data_dir'], dataset='drug2_test')
     drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["infer_batch"], shuffle=None)
     drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["infer_batch"], shuffle=None)
 
@@ -60,9 +59,7 @@ def run(params):
         # T is correct label
         # S is predict score
         # Y is predict label
-    print("T:", T)
-    print("S:", S)
-    print("Y:", Y)
+
 
     # ------------------------------------------------------
     # [Req] Save raw predictions in dataframe
@@ -85,7 +82,8 @@ def run(params):
             y_pred=Y,
             stage="test",
             metric_type=params["metric_type"],
-            output_dir=params["output_dir"]
+            output_dir=params["output_dir"],
+            y_prob=S
         )
 
     return True
