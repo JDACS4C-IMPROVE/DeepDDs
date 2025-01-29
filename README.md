@@ -7,7 +7,7 @@ This is the IMPROVE implementation of the original model with original data.
 ## Dependencies and Installation
 ### Conda Environment
 ```
-conda create -n deepdds python pytorch-gpu scikit-learn pandas pytorch_geometric seaborn rdkit pyyaml
+conda create -n deepdds python pytorch-gpu scikit-learn pandas pytorch_geometric pytorch_scatter seaborn rdkit pyyaml
 conda activate deepdds
 ```
 
