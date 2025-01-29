@@ -46,12 +46,17 @@ export PYTHONPATH=$PYTHONPATH:/your/path/to/IMPROVE
 Run preprocess, train, and infer scripts:
 ```
 cd DeepDDs
-python deepdds_preprocess_improve.py
+python deepdds_preprocess_improve.py --input_dir ./data/raw_data
 python deepdds_train_improve.py
 python deepdds_infer_improve.py
 ```
 
+Note: the original implementation only splits the data into train and test, so the test split is used for both validation and testing here.
+
 
 
 ## References
+
+Original GitHub: https://github.com/Sinwang404/DeepDDs
+Original Paper: https://academic.oup.com/bib/article-abstract/23/1/bbab390/6375262
 
