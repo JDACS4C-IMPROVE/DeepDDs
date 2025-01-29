@@ -148,7 +148,7 @@ def run(params):
 
     drug1_train_path = params["input_dir"] + "/processed/" + "drug1_train.pt"
     drug1_test_path = params["input_dir"] + "/processed/" + "drug1_test.pt"
-    drug2_train_path = params["input_dir"] + "/processed" + "drug2_train.pt"
+    drug2_train_path = params["input_dir"] + "/processed/" + "drug2_train.pt"
     drug2_test_path = params["input_dir"] + "/processed/" + "drug2_test.pt"
     drug1_data_train = torch.load(drug1_train_path)
     drug1_data_test = torch.load(drug1_test_path)
