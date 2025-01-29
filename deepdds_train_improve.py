@@ -146,14 +146,20 @@ def run(params):
     # Load data
     # ------------------------------------------------------
 
-    drug1_train_path = params["input_dir"] + "/processed/" + "drug1_train.pt"
-    drug1_test_path = params["input_dir"] + "/processed/" + "drug1_test.pt"
-    drug2_train_path = params["input_dir"] + "/processed/" + "drug2_train.pt"
-    drug2_test_path = params["input_dir"] + "/processed/" + "drug2_test.pt"
-    drug1_data_train = torch.load(drug1_train_path)
-    drug1_data_test = torch.load(drug1_test_path)
-    drug2_data_train = torch.load(drug2_train_path)
-    drug2_data_test = torch.load(drug2_test_path)
+    #drug1_train_path = params["input_dir"] + "/processed/" + "drug1_train.pt"
+    #drug1_test_path = params["input_dir"] + "/processed/" + "drug1_test.pt"
+    #drug2_train_path = params["input_dir"] + "/processed/" + "drug2_train.pt"
+    #drug2_test_path = params["input_dir"] + "/processed/" + "drug2_test.pt"
+    #drug1_data_train = torch.load(drug1_train_path)
+    #drug1_data_test = torch.load(drug1_test_path)
+    #drug2_data_train = torch.load(drug2_train_path)
+    #drug2_data_test = torch.load(drug2_test_path)
+
+    drug1_data_train = TestbedDataset(root=params['input_dir'], dataset='drug1_train')
+    drug2_data_train = TestbedDataset(root=params['input_dir'], dataset='drug2_train')
+    drug1_data_test = TestbedDataset(root=params['input_dir'], dataset='drug1_test')
+    drug2_data_test = TestbedDataset(root=params['input_dir'], dataset='drug2_test')
+    
 
     print("torch load")
 
