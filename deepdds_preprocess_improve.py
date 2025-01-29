@@ -150,8 +150,8 @@ def run(params: Dict):
 
     print("TRAIN")
     print('开始创建数据 - Start creating data')
-    drug1_data_train = TestbedDataset(root=params['output_dir'], dataset=y_data + '_train_drug1', xd=drug1_train, xt=cell_train, xt_featrue=cell_features, y=label_train,smile_graph=smile_graph)
-    drug2_data_train = TestbedDataset(root=params['output_dir'], dataset=y_data + '_train_drug2', xd=drug2_train, xt=cell_train, xt_featrue=cell_features, y=label_train,smile_graph=smile_graph)
+    drug1_data_train = TestbedDataset(root=params['output_dir'], dataset='drug1_train', xd=drug1_train, xt=cell_train, xt_featrue=cell_features, y=label_train,smile_graph=smile_graph)
+    drug2_data_train = TestbedDataset(root=params['output_dir'], dataset='drug2_train', xd=drug2_train, xt=cell_train, xt_featrue=cell_features, y=label_train,smile_graph=smile_graph)
     print('创建数据成功 - Data created successfully')
 
     drug1_test, drug2_test, cell_test, label_test = list(df_test['drug1']), list(df_test['drug2']), list(df_test['cell']), list(df_test['label'])
@@ -160,8 +160,8 @@ def run(params: Dict):
 
     print("TEST")
     print('开始创建数据 - Start creating data')
-    drug1_data_test = TestbedDataset(root=params['output_dir'], dataset=y_data + '_test_drug1', xd=drug1_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
-    drug2_data_test = TestbedDataset(root=params['output_dir'], dataset=y_data + '_test_drug2', xd=drug2_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
+    drug1_data_test = TestbedDataset(root=params['output_dir'], dataset='drug1_test', xd=drug1_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
+    drug2_data_test = TestbedDataset(root=params['output_dir'], dataset='drug2_test', xd=drug2_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
     print('创建数据成功 - Data created successfully')
     #drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
     #drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
