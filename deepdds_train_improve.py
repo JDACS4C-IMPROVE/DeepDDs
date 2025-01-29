@@ -12,15 +12,9 @@ import improvelib.utils as frm
 from improvelib.metrics import compute_metrics
 from model_params_def import train_params
 
-
-
-
 # Model-specific imports
-import random
 import numpy as np
-import pandas as pd
 from random import shuffle
-import torch.utils.data as Data
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
@@ -29,13 +23,8 @@ from models.gat import GATNet
 from models.gat_gcn_test import GAT_GCN
 from models.gcn import GCNNet
 from models.ginconv import GINConvNet
-from utils_test import *
-from sklearn.metrics import roc_curve, confusion_matrix
-from sklearn.metrics import cohen_kappa_score, accuracy_score, roc_auc_score, precision_score, recall_score, balanced_accuracy_score
-from sklearn import metrics
-from sklearn.model_selection import StratifiedKFold, KFold
-
-
+from utils_test import TestbedDataset
+from sklearn.metrics import roc_auc_score
 
 filepath = Path(__file__).resolve().parent # [Req]
 
@@ -149,10 +138,6 @@ def run(params):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
 
-    file_AUCs = params['output_dir'] + "/AUCs.txt"
-    AUCs = ('Epoch\tAUC_dev\tPR_AUC\tACC\tBACC\tPREC\tTPR\tKAPPA\tRECALL')
-    with open(file_AUCs, 'w') as f:
-        f.write(AUCs + '\n')
     # -----------------------------
     # Train. Iterate over epochs.
     # -----------------------------
@@ -163,28 +148,11 @@ def run(params):
         if early_stop < params["patience"]:
             train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch + 1)
             T, S, Y = predicting(model, device, drug1_loader_test, drug2_loader_test)
-            # T is correct label
-            # S is predict score
-            # Y is predict label
-
-            # compute preformence
             AUC = roc_auc_score(T, S)
-            precision, recall, threshold = metrics.precision_recall_curve(T, S)
-            PR_AUC = metrics.auc(recall, precision)
-            BACC = balanced_accuracy_score(T, Y)
-            tn, fp, fn, tp = confusion_matrix(T, Y).ravel()
-            TPR = tp / (tp + fn)
-            PREC = precision_score(T, Y)
-            ACC = accuracy_score(T, Y)
-            KAPPA = cohen_kappa_score(T, Y)
-            recall = recall_score(T, Y)
-            AUCs = [epoch, AUC, PR_AUC, ACC, BACC, PREC, TPR, KAPPA, recall]
-
             early_stop = early_stop + 1
             if best_auc < AUC:
                 best_auc = AUC
                 print("AUC improved to:", best_auc)
-                save_AUCs(AUCs, file_AUCs)
                 print("Saving model.")
                 torch.save(model, modelpath)
                 early_stop = 0
