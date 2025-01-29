@@ -141,8 +141,8 @@ def run(params: Dict):
     test_num = random_num[pot*i:pot*(i+1)]
     train_num = random_num[:pot*i] + random_num[pot*(i+1):]
 
-    df_train = df[train_num]
-    df_test = df[test_num]
+    df_train = df.iloc[train_num]
+    df_test = df.iloc[test_num]
 
     drug1_train, drug2_train, cell_train, label_train = list(df_train['drug1']), list(df_train['drug2']), list(df_train['cell']), list(df_train['label'])
     drug1_train, drug2_train, cell_train, label_train = np.asarray(drug1_train), np.asarray(drug2_train), np.asarray(cell_train), np.asarray(label_train)
