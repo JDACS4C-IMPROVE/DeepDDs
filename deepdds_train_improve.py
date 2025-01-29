@@ -20,11 +20,12 @@ import torch.nn.functional as F
 import torch.utils.data as Data
 import torch.nn as nn
 from torch.utils.data import TensorDataset, Dataset
+from torch_geometric.data import DataLoader
 from models.gat import GATNet
 from models.gat_gcn_test import GAT_GCN
 from models.gcn import GCNNet
 from models.ginconv import GINConvNet
-from utils_test import *
+from utils_test import TestbedDataset
 from sklearn.metrics import roc_auc_score
 
 filepath = Path(__file__).resolve().parent # [Req]
