@@ -105,16 +105,11 @@ def run(params):
     # --------------------------------------------------------------------
     # [Req] Create data names for train/val sets and build model path
     # --------------------------------------------------------------------
-    train_data_fname = frm.build_ml_data_file_name(data_format=params["data_format"], stage="train")  # [Req]
-    val_data_fname = frm.build_ml_data_file_name(data_format=params["data_format"], stage="val")  # [Req]
 
     modelpath = frm.build_model_path(
         model_file_name=params["model_file_name"],
         model_file_format=params["model_file_format"],
         model_dir=params["output_dir"])
-
-    train_data_path = params["input_dir"] + "/" + train_data_fname
-    val_data_path = params["input_dir"] + "/" + val_data_fname
 
 
     
@@ -190,9 +185,10 @@ def run(params):
                 best_auc = AUC
                 print("AUC improved to:", best_auc)
                 save_AUCs(AUCs, file_AUCs)
+                print("Saving model.")
                 torch.save(model, modelpath)
                 early_stop = 0
-            print(early_stop, "epochs since last improvement out of", params['patience'])
+            print(early_stop, "epochs since last improvement out of", params['patience'], "for early stopping.")
 
     
     # ------------------------------------------------------
