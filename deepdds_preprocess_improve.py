@@ -121,9 +121,7 @@ def run(params: Dict):
     # convert to PyTorch data format
 
     df = pd.read_csv('data/' + y_data + '.csv')
-    drug1, drug2, cell, label = list(df['drug1']), list(df['drug2']), list(df['cell']), list(df['label'])
-    drug1, drug2, cell, label = np.asarray(drug1), np.asarray(drug2), np.asarray(cell), np.asarray(label)
-    # make data PyTorch Geometric ready
+
 
 
 
@@ -131,16 +129,8 @@ def run(params: Dict):
     # ------------------------------------------------------
     # Construct ML data for every stage (train, val, test)
     # ------------------------------------------------------
-    print('开始创建数据 - Start creating data')
-    drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1', xd=drug1, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-    drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2', xd=drug2, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-    print('创建数据成功 - Data created successfully')
-    print('preparing ', y_data + '_.pt in pytorch format!')
-    
-    #drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
-    #drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
 
-    lenth = len(drug1_data)
+    lenth = len(df)
     pot = int(lenth/5)
     print('lenth', lenth)
     print('pot', pot)
@@ -151,24 +141,60 @@ def run(params: Dict):
     test_num = random_num[pot*i:pot*(i+1)]
     train_num = random_num[:pot*i] + random_num[pot*(i+1):]
 
-    drug1_data_train = drug1_data[train_num]
-    drug1_data_test = drug1_data[test_num]
-    #drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
-    #drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["batch_size"], shuffle=None)
-    drug2_data_test = drug2_data[test_num]
-    drug2_data_train = drug2_data[train_num]
-    #drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
-    #drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
+    df_train = df[train_num]
+    df_test = df[test_num]
 
-    drug1_train_path = params["output_dir"] + "/" + "drug1_train.pt"
-    drug1_test_path = params["output_dir"] + "/" + "drug1_test.pt"
-    drug2_train_path = params["output_dir"] + "/" + "drug2_train.pt"
-    drug2_test_path = params["output_dir"] + "/" + "drug2_test.pt"
+    drug1_train, drug2_train, cell_train, label_train = list(df_train['drug1']), list(df_train['drug2']), list(df_train['cell']), list(df_train['label'])
+    drug1_train, drug2_train, cell_train, label_train = np.asarray(drug1_train), np.asarray(drug2_train), np.asarray(cell_train), np.asarray(label_train)
+    # make data PyTorch Geometric ready
 
-    torch.save(drug1_data_train, drug1_train_path)
-    torch.save(drug1_data_test, drug1_test_path)
-    torch.save(drug2_data_train, drug2_train_path)
-    torch.save(drug2_data_test, drug2_test_path)
+    print("TRAIN")
+    print('开始创建数据 - Start creating data')
+    drug1_data_train = TestbedDataset(root=params['output_dir'], dataset=y_data + '_train_drug1', xd=drug1_train, xt=cell_train, xt_featrue=cell_features, y=label_train,smile_graph=smile_graph)
+    drug2_data_train = TestbedDataset(root=params['output_dir'], dataset=y_data + '_train_drug2', xd=drug2_train, xt=cell_train, xt_featrue=cell_features, y=label_train,smile_graph=smile_graph)
+    print('创建数据成功 - Data created successfully')
+
+    drug1_test, drug2_test, cell_test, label_test = list(df_test['drug1']), list(df_test['drug2']), list(df_test['cell']), list(df_test['label'])
+    drug1_test, drug2_test, cell_test, label_test = np.asarray(drug1_test), np.asarray(drug2_test), np.asarray(cell_test), np.asarray(label_test)
+    # make data PyTorch Geometric ready
+
+    print("TEST")
+    print('开始创建数据 - Start creating data')
+    drug1_data_test = TestbedDataset(root=params['output_dir'], dataset=y_data + '_test_drug1', xd=drug1_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
+    drug2_data_test = TestbedDataset(root=params['output_dir'], dataset=y_data + '_test_drug2', xd=drug2_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
+    print('创建数据成功 - Data created successfully')
+    #drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
+    #drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
+
+    #lenth = len(drug1_data)
+    #pot = int(lenth/5)
+    #print('lenth', lenth)
+    #print('pot', pot)
+
+    #random_num = random.sample(range(0, lenth), lenth)
+    ##for i in range(1):
+    #i=0
+    #test_num = random_num[pot*i:pot*(i+1)]
+    #train_num = random_num[:pot*i] + random_num[pot*(i+1):]
+
+    #drug1_data_train = drug1_data[train_num]
+    #drug1_data_test = drug1_data[test_num]
+    ##drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
+    ##drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["batch_size"], shuffle=None)
+    #drug2_data_test = drug2_data[test_num]
+    #drug2_data_train = drug2_data[train_num]
+    ##drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
+    ##drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
+
+    #drug1_train_path = params["output_dir"] + "/" + "drug1_train.pt"
+    #drug1_test_path = params["output_dir"] + "/" + "drug1_test.pt"
+    #drug2_train_path = params["output_dir"] + "/" + "drug2_train.pt"
+    #drug2_test_path = params["output_dir"] + "/" + "drug2_test.pt"
+
+    #torch.save(drug1_data_train, drug1_train_path)
+    #torch.save(drug1_data_test, drug1_test_path)
+    #torch.save(drug2_data_train, drug2_train_path)
+    #torch.save(drug2_data_test, drug2_test_path)
 
     # ------------------------------------------------------
     # [Req] Create data names for ML data
