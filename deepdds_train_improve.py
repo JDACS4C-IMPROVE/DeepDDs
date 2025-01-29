@@ -17,6 +17,7 @@ import numpy as np
 from random import shuffle
 import torch
 import torch.nn.functional as F
+import torch.utils.data as Data
 import torch.nn as nn
 from torch.utils.data import TensorDataset, Dataset
 from models.gat import GATNet
