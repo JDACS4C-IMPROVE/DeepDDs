@@ -196,6 +196,9 @@ def run(params):
     # ------------------------------------------------------
     best_model = torch.load(modelpath, weights_only=False)
     T, S, Y = predicting(best_model, device, drug1_loader_test, drug2_loader_test)
+    print("T:", T)
+    print("S:", S)
+    print("Y:", Y)
         # T is correct label
         # S is predict score
         # Y is predict label
