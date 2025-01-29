@@ -125,19 +125,20 @@ def run(params: Dict):
     drug1, drug2, cell, label = np.asarray(drug1), np.asarray(drug2), np.asarray(cell), np.asarray(label)
     # make data PyTorch Geometric ready
 
-    print('开始创建数据 - Start creating data')
-    TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1', xd=drug1, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-    TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2', xd=drug2, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-    print('创建数据成功 - Data created successfully')
-    print('preparing ', y_data + '_.pt in pytorch format!')
+
 
 
     # ------------------------------------------------------
     # Construct ML data for every stage (train, val, test)
     # ------------------------------------------------------
-
-    drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
-    drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
+    print('开始创建数据 - Start creating data')
+    drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1', xd=drug1, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
+    drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2', xd=drug2, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
+    print('创建数据成功 - Data created successfully')
+    print('preparing ', y_data + '_.pt in pytorch format!')
+    
+    #drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
+    #drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
 
     lenth = len(drug1_data)
     pot = int(lenth/5)
