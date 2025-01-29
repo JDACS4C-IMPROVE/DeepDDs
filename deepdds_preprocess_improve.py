@@ -136,8 +136,8 @@ def run(params: Dict):
     # Construct ML data for every stage (train, val, test)
     # ------------------------------------------------------
 
-    drug1_data = TestbedDataset(root='data', dataset=y_data + '_drug1')
-    drug2_data = TestbedDataset(root='data', dataset=y_data + '_drug2')
+    drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
+    drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
 
     lenth = len(drug1_data)
     pot = int(lenth/5)
