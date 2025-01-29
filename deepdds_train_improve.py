@@ -228,6 +228,7 @@ def run(params):
 
 
     print("testing")
+    print(S)
     AUC = roc_auc_score(T, S)
     precision, recall, threshold = metrics.precision_recall_curve(T, S)
     PR_AUC = metrics.auc(recall, precision)
