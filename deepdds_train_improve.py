@@ -24,7 +24,7 @@ from models.gat import GATNet
 from models.gat_gcn_test import GAT_GCN
 from models.gcn import GCNNet
 from models.ginconv import GINConvNet
-from utils_test import TestbedDataset
+from utils_test import *
 from sklearn.metrics import roc_auc_score
 
 filepath = Path(__file__).resolve().parent # [Req]
