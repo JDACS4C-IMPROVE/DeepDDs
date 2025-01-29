@@ -79,7 +79,7 @@ class TestbedDataset(InMemoryDataset):
             #    
             #    sys.exit()
             # this normally returns an array and throws and error
-            print('cell', cell)
+            #print('cell', cell)
 
             new_cell = []
             # print('cell_feature', cell_feature)

@@ -15,13 +15,13 @@ from itertools import islice
 import joblib
 import pandas as pd
 import numpy as np
-import os
-import json, pickle
+#import os
+#import json, pickle
 from collections import OrderedDict
 from rdkit import Chem
 # from rdkit.Chem import MolFromSmiles
 import networkx as nx
-from utils_test import *
+from utils_test import TestbedDataset
 import random
 from random import shuffle
 import torch.utils.data as Data
@@ -94,16 +94,7 @@ def run(params: Dict):
     # ------------------------------------------------------
     # Load X data (feature representations)
     # ------------------------------------------------------
-
-    # ------------------------------------------------------
-    # Load Y data 
-    # ------------------------------------------------------
-
-
-
-
     file2 = 'data/independent_set/independent_cell_features_954.csv'
-    datafile = 'new_labels_0_10'
     #file2 = cellfile
     cell_features = []
     with open(file2) as csvfile:
@@ -123,30 +114,30 @@ def run(params: Dict):
         print('smiles', smile)
         g = smile_to_graph(smile)
         smile_graph[smile] = g
-
-    datasets = datafile
+    # ------------------------------------------------------
+    # Load Y data 
+    # ------------------------------------------------------
+    y_data = 'new_labels_0_10'
     # convert to PyTorch data format
-    processed_data_file_train = 'data/processed/' + datasets + '_train.pt'
 
-    if ((not os.path.isfile(processed_data_file_train))):
-        df = pd.read_csv('data/' + datasets + '.csv')
-        drug1, drug2, cell, label = list(df['drug1']), list(df['drug2']), list(df['cell']), list(df['label'])
-        drug1, drug2, cell, label = np.asarray(drug1), np.asarray(drug2), np.asarray(cell), np.asarray(label)
-        # make data PyTorch Geometric ready
+    df = pd.read_csv('data/' + y_data + '.csv')
+    drug1, drug2, cell, label = list(df['drug1']), list(df['drug2']), list(df['cell']), list(df['label'])
+    drug1, drug2, cell, label = np.asarray(drug1), np.asarray(drug2), np.asarray(cell), np.asarray(label)
+    # make data PyTorch Geometric ready
 
-        print('开始创建数据 - Start creating data')
-        TestbedDataset(root='data', dataset=datafile + '_drug1', xd=drug1, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-        TestbedDataset(root='data', dataset=datafile + '_drug2', xd=drug2, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
-        print('创建数据成功 - Data created successfully')
-        print('preparing ', datasets + '_.pt in pytorch format!')
+    print('开始创建数据 - Start creating data')
+    TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1', xd=drug1, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
+    TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2', xd=drug2, xt=cell, xt_featrue=cell_features, y=label,smile_graph=smile_graph)
+    print('创建数据成功 - Data created successfully')
+    print('preparing ', y_data + '_.pt in pytorch format!')
 
 
     # ------------------------------------------------------
     # Construct ML data for every stage (train, val, test)
     # ------------------------------------------------------
 
-    drug1_data = TestbedDataset(root='data', dataset=datafile + '_drug1')
-    drug2_data = TestbedDataset(root='data', dataset=datafile + '_drug2')
+    drug1_data = TestbedDataset(root='data', dataset=y_data + '_drug1')
+    drug2_data = TestbedDataset(root='data', dataset=y_data + '_drug2')
 
     lenth = len(drug1_data)
     pot = int(lenth/5)
