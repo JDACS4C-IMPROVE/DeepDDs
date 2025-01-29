@@ -196,9 +196,6 @@ def run(params):
     # ------------------------------------------------------
     best_model = torch.load(modelpath, weights_only=False)
     T, S, Y = predicting(best_model, device, drug1_loader_test, drug2_loader_test)
-    print("T:", T)
-    print("S:", S)
-    print("Y:", Y)
         # T is correct label
         # S is predict score
         # Y is predict label
@@ -229,21 +226,6 @@ def run(params):
         y_prob=S
     )
 
-
-    print("testing")
-    print(S)
-    AUC = roc_auc_score(T, S)
-    precision, recall, threshold = metrics.precision_recall_curve(T, S)
-    PR_AUC = metrics.auc(recall, precision)
-    BACC = balanced_accuracy_score(T, Y)
-    tn, fp, fn, tp = confusion_matrix(T, Y).ravel()
-    TPR = tp / (tp + fn)
-    PREC = precision_score(T, Y)
-    ACC = accuracy_score(T, Y)
-    KAPPA = cohen_kappa_score(T, Y)
-    recall = recall_score(T, Y)
-    AUCs = [epoch, AUC, PR_AUC, ACC, BACC, PREC, TPR, KAPPA, recall]
-    print(AUCs)
     return val_scores
 
 
