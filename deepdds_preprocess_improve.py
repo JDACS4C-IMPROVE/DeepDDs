@@ -163,62 +163,6 @@ def run(params: Dict):
     drug1_data_test = TestbedDataset(root=params['output_dir'], dataset='drug1_test', xd=drug1_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
     drug2_data_test = TestbedDataset(root=params['output_dir'], dataset='drug2_test', xd=drug2_test, xt=cell_test, xt_featrue=cell_features, y=label_test,smile_graph=smile_graph)
     print('创建数据成功 - Data created successfully')
-    #drug1_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug1')
-    #drug2_data = TestbedDataset(root=params['output_dir'], dataset=y_data + '_drug2')
-
-    #lenth = len(drug1_data)
-    #pot = int(lenth/5)
-    #print('lenth', lenth)
-    #print('pot', pot)
-
-    #random_num = random.sample(range(0, lenth), lenth)
-    ##for i in range(1):
-    #i=0
-    #test_num = random_num[pot*i:pot*(i+1)]
-    #train_num = random_num[:pot*i] + random_num[pot*(i+1):]
-
-    #drug1_data_train = drug1_data[train_num]
-    #drug1_data_test = drug1_data[test_num]
-    ##drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
-    ##drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["batch_size"], shuffle=None)
-    #drug2_data_test = drug2_data[test_num]
-    #drug2_data_train = drug2_data[train_num]
-    ##drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
-    ##drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["batch_size"], shuffle=None)
-
-    #drug1_train_path = params["output_dir"] + "/" + "drug1_train.pt"
-    #drug1_test_path = params["output_dir"] + "/" + "drug1_test.pt"
-    #drug2_train_path = params["output_dir"] + "/" + "drug2_train.pt"
-    #drug2_test_path = params["output_dir"] + "/" + "drug2_test.pt"
-
-    #torch.save(drug1_data_train, drug1_train_path)
-    #torch.save(drug1_data_test, drug1_test_path)
-    #torch.save(drug2_data_train, drug2_train_path)
-    #torch.save(drug2_data_test, drug2_test_path)
-
-    # ------------------------------------------------------
-    # [Req] Create data names for ML data
-    # ------------------------------------------------------
-    #train_data_fname = frm.build_ml_data_name(params, stage="train")  # [Req]
-    #val_data_fname = frm.build_ml_data_name(params, stage="val")  # [Req]
-    #test_data_fname = frm.build_ml_data_name(params, stage="test")  # [Req]
-
-    #train_data_path = params["ml_data_outdir"] + "/" + train_data_fname
-    #val_data_path = params["ml_data_outdir"] + "/" + val_data_fname
-    #test_data_path = params["ml_data_outdir"] + "/" + test_data_fname
-
-    # ------------------------------------------------------
-    # Save ML data
-    # ------------------------------------------------------
-    #with open(train_data_path, 'wb+') as f:
-    #    pickle.dump(train_data, f, protocol=4)
-
-    #with open(val_data_path, 'wb+') as f:
-    #    pickle.dump(val_data, f, protocol=4)
-    
-    #with open(test_data_path, 'wb+') as f:
-    #    pickle.dump(test_data, f, protocol=4)
-   
 
     return params["output_dir"]
 
