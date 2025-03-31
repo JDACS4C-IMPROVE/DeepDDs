@@ -126,9 +126,12 @@ def run(params: Dict):
     smile_graph = {}
     print('compound_iso_smiles', compound_iso_smiles)
     for smile in compound_iso_smiles:
-        print('smiles', smile)
-        g = smile_to_graph(smile)
-        smile_graph[smile] = g
+        try:
+            g = smile_to_graph(smile)
+            smile_graph[smile] = g
+        except:
+            print(smile, "is invalid")
+    drug_feature_final = drug_feature_cleaned[drug_feature_cleaned[drug_feature_cleaned.columns[0]].isin(list(smile_graph.keys()))]
     # ------------------------------------------------------
     # Load Y data 
     # ------------------------------------------------------
@@ -142,10 +145,10 @@ def run(params: Dict):
     synergy_labels = [0, 1]
     y_data['label'] = pd.cut(np.array(y_data[params['y_col_name']]), bins=synergy_bins, labels=synergy_labels)
     
-    y_data = y_data.merge(drug_feature_cleaned, how='inner', left_on='DrugID_row', right_on='DrugID')
+    y_data = y_data.merge(drug_feature_final, how='inner', left_on='DrugID_row', right_on='DrugID')
     y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug1'})
-    y_data = y_data.merge(drug_feature_cleaned, how='inner', left_on='DrugID_col', right_on='DrugID')
+    y_data = y_data.merge(drug_feature_final, how='inner', left_on='DrugID_col', right_on='DrugID')
     y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug2'})
     y_data = y_data.rename(columns={'DepMapID': 'cell'})
