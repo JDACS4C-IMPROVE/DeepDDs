@@ -103,7 +103,7 @@ def run(params: Dict):
                                                   benchmark_dir = params['input_dir'], 
                                                   cell_column_name = params['cell_column_name'], 
                                                   norm = params['cell_transcriptomic_transform'])
-    drug_feature = syn.get_drug_mordred(file = params['drug_smiles_file'], 
+    drug_feature = syn.get_drug_smiles(file = params['drug_smiles_file'], 
                      benchmark_dir = params['input_dir'], 
                      drug_column_name = params['drug_column_name'])
     
@@ -119,7 +119,7 @@ def run(params: Dict):
 
     #compound_iso_smiles = []
     #df = pd.read_csv('data/smiles.csv')
-    compound_iso_smiles = list(df.iloc[:, 0])
+    compound_iso_smiles = list(drug_feature.iloc[:, 0])
     #compound_iso_smiles += list(df['smile'])
     compound_iso_smiles = set(compound_iso_smiles)
     smile_graph = {}
