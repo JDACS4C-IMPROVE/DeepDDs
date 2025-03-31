@@ -119,7 +119,8 @@ def run(params: Dict):
 
     #compound_iso_smiles = []
     #df = pd.read_csv('data/smiles.csv')
-    compound_iso_smiles = list(drug_feature.iloc[:, 0])
+    drug_feature_cleaned = drug_feature.dropna(subset=[drug_feature.columns[0]])
+    compound_iso_smiles = list(drug_feature_cleaned.iloc[:, 0])
     #compound_iso_smiles += list(df['smile'])
     compound_iso_smiles = set(compound_iso_smiles)
     smile_graph = {}
@@ -141,10 +142,10 @@ def run(params: Dict):
     synergy_labels = [0, 1]
     y_data['label'] = pd.cut(np.array(y_data[params['y_col_name']]), bins=synergy_bins, labels=synergy_labels)
     
-    y_data = y_data.merge(smiles, how='inner', left_on='DrugID_row', right_on='DrugID')
+    y_data = y_data.merge(drug_feature_cleaned, how='inner', left_on='DrugID_row', right_on='DrugID')
     y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug1'})
-    y_data = y_data.merge(smiles, how='inner', left_on='DrugID_col', right_on='DrugID')
+    y_data = y_data.merge(drug_feature_cleaned, how='inner', left_on='DrugID_col', right_on='DrugID')
     y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug2'})
     y_data = y_data.rename(columns={'DepMapID': 'cell'})
