@@ -146,10 +146,10 @@ def run(params: Dict):
     y_data['label'] = pd.cut(np.array(y_data[params['y_col_name']]), bins=synergy_bins, labels=synergy_labels)
     
     y_data = y_data.merge(drug_feature_final, how='inner', left_on='DrugID_row', right_on='DrugID')
-    y_data = y_data.drop('DrugID', axis=1)
+    #y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug1'})
     y_data = y_data.merge(drug_feature_final, how='inner', left_on='DrugID_col', right_on='DrugID')
-    y_data = y_data.drop('DrugID', axis=1)
+    #y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug2'})
     y_data = y_data.rename(columns={'DepMapID': 'cell'})
 
