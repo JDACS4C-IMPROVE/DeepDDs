@@ -116,7 +116,8 @@ def run(params: Dict):
     print('first cell_features2', cell_features2)
     cell_features2 = np.array(cell_features2)
     print('second cell_features2', cell_features2)
-    cell_features = np.array(cell_feature)
+    cell_features = np.array(cell_feature.reset_index())
+    cell_feature = cell_feature.astype(str)
     print('new cell_features2', cell_features)
     #compound_iso_smiles = []
     #df = pd.read_csv('data/smiles.csv')
