@@ -75,7 +75,7 @@ class TestbedDataset(InMemoryDataset):
                                 edge_index=torch.LongTensor(edge_index).transpose(1, 0),
                                 y=torch.Tensor([labels]))
             cell = self.get_cell_feature(target, xt_featrue)
-
+            print("CELL", cell)
             #if cell == False : # 如果读取cell失败则中断程序 - If reading the cell fails, interrupt the program
             #    
             #    sys.exit()
