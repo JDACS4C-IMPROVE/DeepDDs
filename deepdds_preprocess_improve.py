@@ -154,7 +154,7 @@ def run(params: Dict):
     #y_data = y_data.drop('DrugID', axis=1)
     y_data = y_data.rename(columns={'smiles': 'drug2'})
     y_data = y_data.rename(columns={'DepMapID': 'cell'})
-
+    y_data = y_data[y_data[params['cell_column_name']].isin(cell_feature.index.to_list())]
     small_y_data = y_data[['drug1', 'drug2', 'cell', 'label', 'split']]
     # ------------------------------------------------------
     # Construct ML data for every stage (train, val, test)
