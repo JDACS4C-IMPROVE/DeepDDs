@@ -117,7 +117,7 @@ def run(params: Dict):
     cell_features2 = np.array(cell_features2)
     print('second cell_features2', cell_features2)
     cell_features = np.array(cell_feature)
-    sys.exit()
+    print('new cell_features2', cell_features)
     #compound_iso_smiles = []
     #df = pd.read_csv('data/smiles.csv')
     drug_feature_cleaned = drug_feature.dropna(subset=[drug_feature.columns[0]])
