@@ -138,7 +138,7 @@ def run(params):
     #num_features_xt = drug1_loader_train.x
     print("NCK1", drug1_data_train)
 
-    print("NCK2", len(drug1_data_train.cell))
+    print("NCK2", drug1_data_train.cell.shape)
     model = modeling().to(device)
     global loss_fn
     loss_fn = nn.CrossEntropyLoss()
