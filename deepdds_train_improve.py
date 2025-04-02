@@ -136,7 +136,8 @@ def run(params):
     # Prepare model
     # ------------------------------------------------------
     #num_features_xt = drug1_loader_train.x
-    #print("NCK1", drug1_loader_train.x)
+    print("NCK1", drug1_data_train)
+
     print("NCK2", len(drug1_data_train.cell))
     model = modeling().to(device)
     global loss_fn
