@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict
 
 # [Req] IMPROVE imports
-from improvelib.applications.drug_response_prediction.config import DRPTrainConfig
+from improvelib.applications.synergy.config import SynergyTrainConfig
 from improvelib.utils import str2bool
 import improvelib.utils as frm
 from improvelib.metrics import compute_metrics
@@ -199,17 +199,15 @@ def run(params):
     return val_scores
 
 
-
-
-# [Req]
 def main(args):
-    cfg = DRPTrainConfig()
+    cfg = SynergyTrainConfig()
     params = cfg.initialize_parameters(
         pathToModelDir=filepath,
-        default_config="deepdds_params.txt",
+        default_config="deepdds_params.ini",
         additional_definitions=train_params)
     val_scores = run(params)
     print("\nFinished training model.")
+
 
 
 # [Req]
