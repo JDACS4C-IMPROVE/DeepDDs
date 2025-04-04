@@ -150,7 +150,7 @@ def run(params):
 
     determine_gene_dim(drug1_loader_train)
 
-    model = modeling().to(device)
+    model = modeling(num_features_xt=drug1_data_train.cell.shape[1]).to(device)
     global loss_fn
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
