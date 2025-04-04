@@ -12,35 +12,17 @@ import improvelib.utils as frm
 
 # Model-specific imports
 import csv
-
-#import joblib
 import pandas as pd
 import numpy as np
-#import os
-#import json, pickle
-#from collections import OrderedDict
-
 from utils_test import TestbedDataset
-import random
 from random import shuffle
-#import torch.utils.data as Data
-#import torch
 import torch.nn.functional as F
 import torch.nn as nn
-#from torch.utils.data import TensorDataset, Dataset
-#import torch_geometric.deprecation
 from utils_preprocess import smile_to_graph
 from model_params_def import preprocess_params
 filepath = Path(__file__).resolve().parent # [Req]
 
-
-
-
-
-# [Req]
 def run(params: Dict):
-
-
     # ------------------------------------------------------
     # Load X data (feature representations)
     # ------------------------------------------------------
@@ -82,7 +64,7 @@ def run(params: Dict):
             smile_graph[smile] = g
         except:
             print(smile, "is invalid")
-    print("cleaned smiles", smile_graph)
+    print("cleaned smiles", smile_graph.keys())
     drug_feature_final = drug_feature_cleaned[drug_feature_cleaned[drug_feature_cleaned.columns[0]].isin(list(smile_graph.keys()))]
     # ------------------------------------------------------
     # Load Y data 
