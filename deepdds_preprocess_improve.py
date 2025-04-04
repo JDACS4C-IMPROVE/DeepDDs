@@ -26,10 +26,6 @@ def run(params: Dict):
     # ------------------------------------------------------
     # Load X data (feature representations)
     # ------------------------------------------------------
-    y_data = syn.get_all_response_data(train_split_file = params['train_split_file'], 
-                                   val_split_file = params['val_split_file'], 
-                                   test_split_file = params['test_split_file'], 
-                                   benchmark_dir = params['input_dir'])
     cell_feature = syn.get_cell_transcriptomics(file = params['cell_transcriptomic_file'], 
                                                   benchmark_dir = params['input_dir'], 
                                                   cell_column_name = params['cell_column_name'], 
@@ -38,9 +34,11 @@ def run(params: Dict):
                      benchmark_dir = params['input_dir'], 
                      drug_column_name = params['drug_column_name'])
     
-    drug_smiles_column_name = drug_feature.columns[0]
+
     cell_features = np.array(cell_feature.reset_index())
     cell_feature = cell_feature.astype(str)
+    
+    drug_smiles_column_name = drug_feature.columns[0]
     drug_feature_cleaned = drug_feature.dropna(subset=[drug_smiles_column_name])
     compound_iso_smiles = list(drug_feature_cleaned.iloc[:, 0])
     compound_iso_smiles = set(compound_iso_smiles)
@@ -54,11 +52,14 @@ def run(params: Dict):
             print(smile, "is invalid")
     #print("cleaned smiles", smile_graph.keys())
     drug_feature_final = drug_feature_cleaned[drug_feature_cleaned[drug_smiles_column_name].isin(list(smile_graph.keys()))]
+    
     # ------------------------------------------------------
     # Load Y data 
     # ------------------------------------------------------
-
-
+    y_data = syn.get_all_response_data(train_split_file = params['train_split_file'], 
+                                   val_split_file = params['val_split_file'], 
+                                   test_split_file = params['test_split_file'], 
+                                   benchmark_dir = params['input_dir'])
 
     # binarize the y data
     synergy_bins = [-np.inf, params['cutoff'], np.inf]
@@ -72,7 +73,7 @@ def run(params: Dict):
     # subset with cell
     y_data = y_data[y_data[params['cell_column_name']].isin(cell_feature.index.to_list())]
     
-    
+    # small df for Dataset creation
     small_y_data = y_data[['drug1', 'drug2', params['cell_column_name'], 'label', 'split']]
     small_y_data = small_y_data.rename(columns={params['cell_column_name']: 'cell'})
 
