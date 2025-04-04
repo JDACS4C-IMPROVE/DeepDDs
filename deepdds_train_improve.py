@@ -120,30 +120,29 @@ def run(params):
 
     drug1_data_train = TestbedDataset(root=params['input_dir'], dataset='drug1_train')
     drug2_data_train = TestbedDataset(root=params['input_dir'], dataset='drug2_train')
-    drug1_data_test = TestbedDataset(root=params['input_dir'], dataset='drug1_test')
-    drug2_data_test = TestbedDataset(root=params['input_dir'], dataset='drug2_test')
+    drug1_data_val = TestbedDataset(root=params['input_dir'], dataset='drug1_val')
+    drug2_data_val = TestbedDataset(root=params['input_dir'], dataset='drug2_val')
     
     print("torch load")
 
     drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
     drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
-    drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["val_batch"], shuffle=None)
-    drug2_loader_test = DataLoader(drug2_data_test, batch_size=params["val_batch"], shuffle=None)
+    drug1_loader_val = DataLoader(drug1_data_val, batch_size=params["val_batch"], shuffle=None)
+    drug2_loader_val = DataLoader(drug2_data_val, batch_size=params["val_batch"], shuffle=None)
 
     print("data load")
   
     # ------------------------------------------------------
     # Prepare model
     # ------------------------------------------------------
-    #num_features_xt = drug1_loader_train.x
-    print("NCK2", drug1_data_train.cell.shape[1])
 
 
-    def determine_gene_dim(dataloader):
+
+    def determine_sample_data(dataloader):
         sample_data = next(iter(dataloader)) # Get first batch
         print("sample_data", sample_data)
 
-    determine_gene_dim(drug1_loader_train)
+    determine_sample_data(drug1_loader_train)
 
     model = modeling(num_features_xt=drug1_data_train.cell.shape[1]).to(device)
     global loss_fn
@@ -159,7 +158,7 @@ def run(params):
     for epoch in range(params["epochs"]):
         if early_stop < params["patience"]:
             train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch + 1)
-            T, S, Y = predicting(model, device, drug1_loader_test, drug2_loader_test)
+            T, S, Y = predicting(model, device, drug1_loader_val, drug2_loader_val)
             AUC = roc_auc_score(T, S)
             early_stop = early_stop + 1
             if best_auc < AUC:
@@ -175,7 +174,7 @@ def run(params):
     # Load best model and compute predictions
     # ------------------------------------------------------
     best_model = torch.load(modelpath, weights_only=False)
-    T, S, Y = predicting(best_model, device, drug1_loader_test, drug2_loader_test)
+    T, S, Y = predicting(best_model, device, drug1_loader_val, drug2_loader_val)
         # T is correct label
         # S is predict score
         # Y is predict label
