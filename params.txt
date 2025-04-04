@@ -1,9 +1,0 @@
-[Global_Params]
-model_name = "deepdds"
-
-[Preprocess]
-
-[Train]
-
-
-[Infer]
