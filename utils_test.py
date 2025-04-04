@@ -75,8 +75,8 @@ class TestbedDataset(InMemoryDataset):
                                 edge_index=torch.LongTensor(edge_index).transpose(1, 0),
                                 y=torch.Tensor([labels]))
             cell = self.get_cell_feature(target, xt_featrue)
-            print("TARGET", target)
-            print("CELL", cell)
+            #print("TARGET", target)
+            #print("CELL", cell)
             #if cell == False : # 如果读取cell失败则中断程序 - If reading the cell fails, interrupt the program
             #    
             #    sys.exit()
@@ -101,7 +101,7 @@ class TestbedDataset(InMemoryDataset):
         data, slices = self.collate(data_list)
         # save preprocessed data:
         torch.save((data, slices), self.processed_paths[0])
-
+'''
 def rmse(y,f):
     rmse = sqrt(((y - f)**2).mean(axis=0))
     return rmse
@@ -138,4 +138,4 @@ def ci(y,f):
         i = i - 1
         j = i-1
     ci = S/z
-    return ci
+    return ci'''
