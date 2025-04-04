@@ -56,18 +56,18 @@ def run(params: Dict):
                      benchmark_dir = params['input_dir'], 
                      drug_column_name = params['drug_column_name'])
     
-    file2 = 'data/independent_set/independent_cell_features_954.csv'
-    cell_features2 = []
-    with open(file2) as csvfile:
-        csv_reader = csv.reader(csvfile)  # 使用csv.reader读取csvfile中的文件
-        for row in csv_reader:
-            cell_features2.append(row)
-    print('first cell_features2', cell_features2)
-    cell_features2 = np.array(cell_features2)
-    print('second cell_features2', cell_features2)
+    #file2 = 'data/independent_set/independent_cell_features_954.csv'
+    #cell_features2 = []
+    #with open(file2) as csvfile:
+    #    csv_reader = csv.reader(csvfile)  # 使用csv.reader读取csvfile中的文件
+    #    for row in csv_reader:
+    #        cell_features2.append(row)
+    #print('first cell_features2', cell_features2)
+    #cell_features2 = np.array(cell_features2)
+    #print('second cell_features2', cell_features2)
     cell_features = np.array(cell_feature.reset_index())
     cell_feature = cell_feature.astype(str)
-    print('new cell_features2', cell_features)
+    #print('new cell_features2', cell_features)
     #compound_iso_smiles = []
     #df = pd.read_csv('data/smiles.csv')
     drug_feature_cleaned = drug_feature.dropna(subset=[drug_feature.columns[0]])
