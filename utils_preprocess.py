@@ -1,5 +1,7 @@
 from rdkit import Chem
 import networkx as nx
+import numpy as np
+from itertools import islice
 
 def get_cell_feature(cellId, cell_features):
     for row in islice(cell_features, 0, None):
