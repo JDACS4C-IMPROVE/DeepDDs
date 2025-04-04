@@ -77,11 +77,10 @@ def run(params: Dict):
     smile_graph = {}
     print('compound_iso_smiles', compound_iso_smiles)
     for smile in compound_iso_smiles:
-        try:
-            g = smile_to_graph(smile)
-            smile_graph[smile] = g
-        except:
-            print(smile, "is invalid")
+        g = smile_to_graph(smile)
+        smile_graph[smile] = g
+        #except:
+        #    print(smile, "is invalid")
     print("cleaned smiles", smile_graph)
     drug_feature_final = drug_feature_cleaned[drug_feature_cleaned[drug_feature_cleaned.columns[0]].isin(list(smile_graph.keys()))]
     # ------------------------------------------------------
