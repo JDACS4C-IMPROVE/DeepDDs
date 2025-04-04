@@ -11,10 +11,9 @@ import improvelib.utils as frm
 from model_params_def import infer_params
 
 # Model-specific imports, as needed
-from deepdds_train_improve import predicting
-from utils_test import DataLoader
+from utils_test import TestbedDataset, DataLoader, predicting
 import torch
-from utils_test import TestbedDataset
+
 
 filepath = Path(__file__).resolve().parent # [Req]
 
@@ -68,7 +67,7 @@ def run(params):
         y_true=T,
         y_pred=Y,
         stage="test",
-        y_col_name=params["y_col_name"],
+        y_col_name='label',
         output_dir=params["output_dir"],
         input_dir=params["input_data_dir"]
     )

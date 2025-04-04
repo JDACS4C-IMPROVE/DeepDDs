@@ -14,7 +14,6 @@ from model_params_def import train_params
 
 # Model-specific imports
 import numpy as np
-from random import shuffle
 import torch
 import torch.nn.functional as F
 #import torch.utils.data as Data
@@ -25,85 +24,21 @@ from models.gat import GATNet
 from models.gat_gcn_test import GAT_GCN
 from models.gcn import GCNNet
 from models.ginconv import GINConvNet
-from utils_test import TestbedDataset
+from utils_test import TestbedDataset, train, predicting, determine_sample_data
 from sklearn.metrics import roc_auc_score
 
 filepath = Path(__file__).resolve().parent # [Req]
-
-
-# ---------------------
 modeling = GCNNet
 
-def train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch):
-    print('Training on {} samples...'.format(len(drug1_loader_train.dataset)))
-    model.train()
-    for batch_idx, data in enumerate(zip(drug1_loader_train, drug2_loader_train)):
-        data1 = data[0]
-        data2 = data[1]
-        data1 = data1.to(device)
-        data2 = data2.to(device)
-        y = data[0].y.view(-1, 1).long().to(device)
-        y = y.squeeze(1)
-        optimizer.zero_grad()
-        output = model(data1, data2)
-        loss = loss_fn(output, y)
-        # print('loss', loss)
-        loss.backward()
-        optimizer.step()
-        if batch_idx % 20 == 0:
-            print('Train epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(epoch,
-                                                                           batch_idx * len(data1.x),
-                                                                           len(drug1_loader_train.dataset),
-                                                                           100. * batch_idx / len(drug1_loader_train),
-                                                                           loss.item()))
-
-
-def predicting(model, device, drug1_loader_test, drug2_loader_test):
-    model.eval()
-    total_preds = torch.Tensor()
-    total_labels = torch.Tensor()
-    total_prelabels = torch.Tensor()
-    print('Make prediction for {} samples...'.format(len(drug1_loader_test.dataset)))
-    with torch.no_grad():
-        for data in zip(drug1_loader_test, drug2_loader_test):
-            data1 = data[0]
-            data2 = data[1]
-            data1 = data1.to(device)
-            data2 = data2.to(device)
-            output = model(data1, data2)
-            ys = F.softmax(output, 1).to('cpu').data.numpy()
-            predicted_labels = list(map(lambda x: np.argmax(x), ys))
-            predicted_scores = list(map(lambda x: x[1], ys))
-            total_preds = torch.cat((total_preds, torch.Tensor(predicted_scores)), 0)
-            total_prelabels = torch.cat((total_prelabels, torch.Tensor(predicted_labels)), 0)
-            total_labels = torch.cat((total_labels, data1.y.view(-1, 1).cpu()), 0)
-    return total_labels.numpy().flatten(), total_preds.numpy().flatten(), total_prelabels.numpy().flatten()
-
-
-def shuffle_dataset(dataset, seed):
-    np.random.seed(seed)
-    np.random.shuffle(dataset)
-    return dataset
-
-
-def split_dataset(dataset, ratio):
-    n = int(len(dataset) * ratio)
-    dataset_1, dataset_2 = dataset[:n], dataset[n:]
-    return dataset_1, dataset_2
-
-# [Req]
 def run(params):
     # --------------------------------------------------------------------
     # [Req] Create data names for train/val sets and build model path
     # --------------------------------------------------------------------
-
     modelpath = frm.build_model_path(
         model_file_name=params["model_file_name"],
         model_file_format=params["model_file_format"],
         model_dir=params["output_dir"])
 
-
-    
     # ------------------------------------------------------
     # CUDA/CPU device
     # ------------------------------------------------------
@@ -113,37 +48,26 @@ def run(params):
     else:
         device = torch.device('cpu')
         print('The code uses CPU!!!')
+
     # ------------------------------------------------------
     # Load data
     # ------------------------------------------------------
-
-
     drug1_data_train = TestbedDataset(root=params['input_dir'], dataset='drug1_train')
     drug2_data_train = TestbedDataset(root=params['input_dir'], dataset='drug2_train')
     drug1_data_val = TestbedDataset(root=params['input_dir'], dataset='drug1_val')
     drug2_data_val = TestbedDataset(root=params['input_dir'], dataset='drug2_val')
-    
     print("torch load")
 
     drug1_loader_train = DataLoader(drug1_data_train, batch_size=params["batch_size"], shuffle=None)
     drug2_loader_train = DataLoader(drug2_data_train, batch_size=params["batch_size"], shuffle=None)
     drug1_loader_val = DataLoader(drug1_data_val, batch_size=params["val_batch"], shuffle=None)
     drug2_loader_val = DataLoader(drug2_data_val, batch_size=params["val_batch"], shuffle=None)
-
     print("data load")
   
     # ------------------------------------------------------
     # Prepare model
     # ------------------------------------------------------
-
-
-
-    def determine_sample_data(dataloader):
-        sample_data = next(iter(dataloader)) # Get first batch
-        print("sample_data", sample_data)
-
     determine_sample_data(drug1_loader_train)
-
     model = modeling(num_features_xt=drug1_data_train.cell.shape[1]).to(device)
     global loss_fn
     loss_fn = nn.CrossEntropyLoss()
@@ -152,7 +76,6 @@ def run(params):
     # -----------------------------
     # Train. Iterate over epochs.
     # -----------------------------
-
     best_auc = 0
     early_stop = 0
     for epoch in range(params["epochs"]):

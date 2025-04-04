@@ -1,13 +1,74 @@
 import os
 from itertools import islice
-import sys
 import numpy as np
-from math import sqrt
-from scipy import stats
-from torch_geometric.data import InMemoryDataset, DataLoader
+from torch_geometric.data import InMemoryDataset
 from torch_geometric import data as DATA
 import torch
 from creat_data_DC import creat_data
+from random import shuffle
+
+def determine_sample_data(dataloader):
+    sample_data = next(iter(dataloader)) # Get first batch
+    print("sample_data", sample_data)
+
+def train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch):
+    print('Training on {} samples...'.format(len(drug1_loader_train.dataset)))
+    model.train()
+    for batch_idx, data in enumerate(zip(drug1_loader_train, drug2_loader_train)):
+        data1 = data[0]
+        data2 = data[1]
+        data1 = data1.to(device)
+        data2 = data2.to(device)
+        y = data[0].y.view(-1, 1).long().to(device)
+        y = y.squeeze(1)
+        optimizer.zero_grad()
+        output = model(data1, data2)
+        loss = loss_fn(output, y)
+        # print('loss', loss)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % 20 == 0:
+            print('Train epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(epoch,
+                                                                           batch_idx * len(data1.x),
+                                                                           len(drug1_loader_train.dataset),
+                                                                           100. * batch_idx / len(drug1_loader_train),
+                                                                           loss.item()))
+
+
+def predicting(model, device, drug1_loader_test, drug2_loader_test):
+    model.eval()
+    total_preds = torch.Tensor()
+    total_labels = torch.Tensor()
+    total_prelabels = torch.Tensor()
+    print('Make prediction for {} samples...'.format(len(drug1_loader_test.dataset)))
+    with torch.no_grad():
+        for data in zip(drug1_loader_test, drug2_loader_test):
+            data1 = data[0]
+            data2 = data[1]
+            data1 = data1.to(device)
+            data2 = data2.to(device)
+            output = model(data1, data2)
+            ys = F.softmax(output, 1).to('cpu').data.numpy()
+            predicted_labels = list(map(lambda x: np.argmax(x), ys))
+            predicted_scores = list(map(lambda x: x[1], ys))
+            total_preds = torch.cat((total_preds, torch.Tensor(predicted_scores)), 0)
+            total_prelabels = torch.cat((total_prelabels, torch.Tensor(predicted_labels)), 0)
+            total_labels = torch.cat((total_labels, data1.y.view(-1, 1).cpu()), 0)
+    return total_labels.numpy().flatten(), total_preds.numpy().flatten(), total_prelabels.numpy().flatten()
+
+
+def shuffle_dataset(dataset, seed):
+    np.random.seed(seed)
+    np.random.shuffle(dataset)
+    return dataset
+
+
+def split_dataset(dataset, ratio):
+    n = int(len(dataset) * ratio)
+    dataset_1, dataset_2 = dataset[:n], dataset[n:]
+    return dataset_1, dataset_2
+
+
 
 class TestbedDataset(InMemoryDataset):
     def __init__(self, root='/tmp', dataset='_drug1',
@@ -101,41 +162,3 @@ class TestbedDataset(InMemoryDataset):
         data, slices = self.collate(data_list)
         # save preprocessed data:
         torch.save((data, slices), self.processed_paths[0])
-'''
-def rmse(y,f):
-    rmse = sqrt(((y - f)**2).mean(axis=0))
-    return rmse
-def save_AUCs(AUCs, filename):
-    with open(filename, 'a') as f:
-        f.write('\t'.join(map(str, AUCs)) + '\n')
-def mse(y,f):
-    mse = ((y - f)**2).mean(axis=0)
-    return mse
-def pearson(y,f):
-    rp = np.corrcoef(y, f)[0,1]
-    return rp
-def spearman(y,f):
-    rs = stats.spearmanr(y, f)[0]
-    return rs
-def ci(y,f):
-    ind = np.argsort(y)
-    y = y[ind]
-    f = f[ind]
-    i = len(y)-1
-    j = i-1
-    z = 0.0
-    S = 0.0
-    while i > 0:
-        while j >= 0:
-            if y[i] > y[j]:
-                z = z+1
-                u = f[i] - f[j]
-                if u > 0:
-                    S = S + 1
-                elif u == 0:
-                    S = S + 0.5
-            j = j - 1
-        i = i - 1
-        j = i-1
-    ci = S/z
-    return ci'''
