@@ -141,6 +141,15 @@ def run(params):
     print("NCK2", drug1_data_train.cell.shape[1])
     print("NCK3", drug1_data_train.edge_index.shape)
 
+    def determine_gene_dim(dataloader):
+        sample_data = next(iter(dataloader)) # Get first batch
+        num_genes = sample_data.target.shape
+        print("sample_data", sample_data)
+        print("num_genes", num_genes)
+        print("sample_data.dataset", sample_data.dataset)
+
+    determine_gene_dim(drug1_loader_train)
+
     model = modeling().to(device)
     global loss_fn
     loss_fn = nn.CrossEntropyLoss()
