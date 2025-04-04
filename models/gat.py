@@ -6,7 +6,7 @@ from torch_geometric.nn import GATConv
 from torch_geometric.nn import global_max_pool as gmp
 import pandas as pd
 import numpy as np
-from heatmap import get_map
+
 
 
 
