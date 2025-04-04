@@ -143,7 +143,7 @@ def run(params):
 
     def determine_gene_dim(dataloader):
         sample_data = next(iter(dataloader)) # Get first batch
-        num_genes = sample_data.target.shape
+        num_genes = sample_data.cell.shape
         print("sample_data", sample_data)
         print("num_genes", num_genes)
         print("sample_data.dataset", sample_data.dataset)
