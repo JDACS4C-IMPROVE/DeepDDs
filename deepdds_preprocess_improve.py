@@ -82,6 +82,7 @@ def run(params: Dict):
             smile_graph[smile] = g
         except:
             print(smile, "is invalid")
+    print("cleaned smiles", smile_graph)
     drug_feature_final = drug_feature_cleaned[drug_feature_cleaned[drug_feature_cleaned.columns[0]].isin(list(smile_graph.keys()))]
     # ------------------------------------------------------
     # Load Y data 
