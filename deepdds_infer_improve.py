@@ -5,7 +5,7 @@ from typing import Dict
 import pandas as pd
 
 # [Req] IMPROVE imports
-from improvelib.applications.drug_response_prediction.config import DRPInferConfig
+from improvelib.applications.synergy.config import SynergyInferConfig
 from improvelib.utils import str2bool
 import improvelib.utils as frm
 from model_params_def import infer_params
@@ -89,12 +89,11 @@ def run(params):
     return True
 
 
-# [Req]
 def main(args):
-    cfg = DRPInferConfig()
+    cfg = SynergyInferConfig()
     params = cfg.initialize_parameters(
         pathToModelDir=filepath,
-        default_config="deepdds_params.txt",
+        default_config="deepdds_params.ini",
         additional_definitions=infer_params,
     )
     status = run(params)
