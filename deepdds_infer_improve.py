@@ -11,7 +11,8 @@ import improvelib.utils as frm
 from model_params_def import infer_params
 
 # Model-specific imports, as needed
-from utils_test import TestbedDataset, DataLoader, predicting
+from torch_geometric.data import DataLoader
+from utils_test import TestbedDataset, predicting
 import torch
 
 
