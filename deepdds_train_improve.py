@@ -80,7 +80,7 @@ def run(params):
     early_stop = 0
     for epoch in range(params["epochs"]):
         if early_stop < params["patience"]:
-            train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch + 1)
+            train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch + 1, loss_fn)
             T, S, Y = predicting(model, device, drug1_loader_val, drug2_loader_val)
             AUC = roc_auc_score(T, S)
             early_stop = early_stop + 1

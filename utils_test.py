@@ -11,7 +11,7 @@ def determine_sample_data(dataloader):
     sample_data = next(iter(dataloader)) # Get first batch
     print("sample_data", sample_data)
 
-def train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch):
+def train(model, device, drug1_loader_train, drug2_loader_train, optimizer, epoch, loss_fn):
     print('Training on {} samples...'.format(len(drug1_loader_train.dataset)))
     model.train()
     for batch_idx, data in enumerate(zip(drug1_loader_train, drug2_loader_train)):
