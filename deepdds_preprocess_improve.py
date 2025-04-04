@@ -38,23 +38,11 @@ def run(params: Dict):
                      benchmark_dir = params['input_dir'], 
                      drug_column_name = params['drug_column_name'])
     
-    #file2 = 'data/independent_set/independent_cell_features_954.csv'
-    #cell_features2 = []
-    #with open(file2) as csvfile:
-    #    csv_reader = csv.reader(csvfile)  # 使用csv.reader读取csvfile中的文件
-    #    for row in csv_reader:
-    #        cell_features2.append(row)
-    #print('first cell_features2', cell_features2)
-    #cell_features2 = np.array(cell_features2)
-    #print('second cell_features2', cell_features2)
+
     cell_features = np.array(cell_feature.reset_index())
     cell_feature = cell_feature.astype(str)
-    #print('new cell_features2', cell_features)
-    #compound_iso_smiles = []
-    #df = pd.read_csv('data/smiles.csv')
     drug_feature_cleaned = drug_feature.dropna(subset=[drug_feature.columns[0]])
     compound_iso_smiles = list(drug_feature_cleaned.iloc[:, 0])
-    #compound_iso_smiles += list(df['smile'])
     compound_iso_smiles = set(compound_iso_smiles)
     smile_graph = {}
     print('compound_iso_smiles', compound_iso_smiles)
@@ -69,13 +57,11 @@ def run(params: Dict):
     # ------------------------------------------------------
     # Load Y data 
     # ------------------------------------------------------
-    #y_data = 'new_labels_0_10'
-    # convert to PyTorch data format
-    #df = pd.read_csv('data/' + y_data + '.csv')
+
 
 
     # cutoff is 10 per paper -- unhardcode this
-    synergy_bins = [-np.inf, 10, np.inf]
+    synergy_bins = [-np.inf, params['cutoff'], np.inf]
     synergy_labels = [0, 1]
     y_data['label'] = pd.cut(np.array(y_data[params['y_col_name']]), bins=synergy_bins, labels=synergy_labels)
     
@@ -92,24 +78,13 @@ def run(params: Dict):
     # Construct ML data for every stage (train, val, test)
     # ------------------------------------------------------
 
-    #lenth = len(df)
-    #pot = int(lenth/5)
-    #print('lenth', lenth)
-    #print('pot', pot)
-    #random_num = random.sample(range(0, lenth), lenth)
-    #i=0
-    #test_num = random_num[pot*i:pot*(i+1)]
-    #train_num = random_num[:pot*i] + random_num[pot*(i+1):]
-    #df_train = df.iloc[train_num]
-    #df_test = df.iloc[test_num]
-
     df_train = small_y_data[small_y_data['split'] == 'train']
     df_val = small_y_data[small_y_data['split'] == 'val']
     df_test = small_y_data[small_y_data['split'] == 'test']
 
     drug1_train, drug2_train, cell_train, label_train = list(df_train['drug1']), list(df_train['drug2']), list(df_train['cell']), list(df_train['label'])
     drug1_train, drug2_train, cell_train, label_train = np.asarray(drug1_train), np.asarray(drug2_train), np.asarray(cell_train), np.asarray(label_train)
-    # make data PyTorch Geometric ready
+
 
     print("TRAIN")
     print('开始创建数据 - Start creating data')
