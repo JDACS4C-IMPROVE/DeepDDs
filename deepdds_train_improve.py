@@ -146,7 +146,7 @@ def run(params):
         num_genes = sample_data.cell.shape
         print("sample_data", sample_data)
         print("num_genes", num_genes)
-        print("sample_data.dataset", sample_data.dataset)
+
 
     determine_gene_dim(drug1_loader_train)
 
