@@ -33,8 +33,6 @@ def run(params):
     # --------------------------------------------------------------------
     # Load inference data (ML data)
     # --------------------------------------------------------------------
-
-    # original model only has train and test, so reusing test data for both val and test
     drug1_data_test = TestbedDataset(root=params['input_data_dir'], dataset='drug1_test')
     drug2_data_test = TestbedDataset(root=params['input_data_dir'], dataset='drug2_test')
     drug1_loader_test = DataLoader(drug1_data_test, batch_size=params["infer_batch"], shuffle=None)
@@ -53,13 +51,11 @@ def run(params):
     # --------------------------------------------------------------------
     # Load best model and compute predictions
     # --------------------------------------------------------------------
-
     best_model = torch.load(modelpath, weights_only=False)
     T, S, Y = predicting(best_model, device, drug1_loader_test, drug2_loader_test)
         # T is correct label
         # S is predict score
         # Y is predict label
-
 
     # ------------------------------------------------------
     # [Req] Save raw predictions in dataframe
