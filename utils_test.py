@@ -3,6 +3,7 @@ from itertools import islice
 import numpy as np
 from torch_geometric.data import InMemoryDataset
 from torch_geometric import data as DATA
+import torch.nn.functional as F
 import torch
 from creat_data_DC import creat_data
 from random import shuffle
