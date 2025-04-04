@@ -187,7 +187,7 @@ def run(params):
         y_true=T,
         y_pred=Y,
         stage="val",
-        y_col_name=params["y_col_name"],
+        y_col_name='label',
         output_dir=params["output_dir"],
         input_dir=params["input_dir"]
     )
