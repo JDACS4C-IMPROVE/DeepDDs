@@ -60,8 +60,6 @@ def run(params):
     # ------------------------------------------------------
     # [Req] Save raw predictions in dataframe
     # ------------------------------------------------------
-    print("T", T)
-    print("T shape", T.shape)
     frm.store_predictions_df(
         y_true=T,
         y_pred=Y,
