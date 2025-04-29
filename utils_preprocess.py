@@ -50,5 +50,7 @@ def smile_to_graph(smile):
     edge_index = []
     for e1, e2 in g.edges:
         edge_index.append([e1, e2])
+    if not edge_index:
+        raise ValueError("edge_index is empty, will fail later")
 
     return c_size, features, edge_index
