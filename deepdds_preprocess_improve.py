@@ -56,10 +56,12 @@ def run(params: Dict):
     response_train = frm.get_y_data(split_file=params["train_split_file"], 
                                    benchmark_dir=params['input_dir'], 
                                    y_data_file=params['y_data_file'])
+    response_train = response_train.dropna(subset=[params['y_col_name']])
     
     print("Find intersection of training data.")
     response_train = frm.get_y_data_with_features(response_train, cell_feature, params['canc_col_name'])
-    response_train = frm.get_y_data_with_features(response_train, drug_feature, params['drug_col_name'])
+    response_train = frm.get_y_data_with_features(response_train, drug_feature, params['drug_1_col_name'])
+    response_train = frm.get_y_data_with_features(response_train, drug_feature, params['drug_2_col_name'])
     omics_train = frm.get_features_in_y_data(cell_feature, response_train, params['canc_col_name'])
 
     print("Determine transformations.")
@@ -82,7 +84,8 @@ def run(params: Dict):
                                 benchmark_dir=params['input_dir'], 
                                 y_data_file=params['y_data_file'])
         y_data_stage = frm.get_y_data_with_features(y_data_stage, cell_feature, params['canc_col_name'])
-        y_data_stage = frm.get_y_data_with_features(y_data_stage, drug_feature, params['drug_col_name'])
+        y_data_stage = frm.get_y_data_with_features(y_data_stage, drug_feature, params['drug_1_col_name'])
+        y_data_stage = frm.get_y_data_with_features(y_data_stage, drug_feature, params['drug_2_col_name'])
         omics_stage = frm.get_features_in_y_data(cell_feature, y_data_stage, params['canc_col_name'])
         drug1_stage = frm.get_features_in_y_data(drug_feature, y_data_stage, params['drug_1_col_name'])
         drug2_stage = frm.get_features_in_y_data(drug_feature, y_data_stage, params['drug_2_col_name'])
