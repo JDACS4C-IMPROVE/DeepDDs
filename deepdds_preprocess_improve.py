@@ -82,6 +82,7 @@ def run(params: Dict):
         y_data_stage = frm.get_y_data(split_file=split_file, 
                                 benchmark_dir=params['input_dir'], 
                                 y_data_file=params['y_data_file'])
+        y_data_stage = y_data_stage.dropna(subset=[params['y_col_name']])
         y_data_stage = frm.get_y_data_with_features(y_data_stage, cell_feature, params['canc_col_name'])
         y_data_stage = frm.get_y_data_with_features(y_data_stage, drug_feature, params['drug_1_col_name'])
         y_data_stage = frm.get_y_data_with_features(y_data_stage, drug_feature, params['drug_2_col_name'])
