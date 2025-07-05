@@ -104,7 +104,8 @@ def run(params: Dict):
         data = data.rename(columns={'SMILES': 'drug2'})
         data = data.rename(columns={params['canc_col_name']: 'cell'})
     
-        cell_feature_for_TBD = np.array(omics_stage.reset_index()).astype(str)
+        cell_feature_for_TBD = np.array(omics_stage.reset_index())
+        cell_feature_for_TBD = cell_feature_for_TBD.astype(str)
 
         smile_graph = {}
         for i, row in drug_feature.iterrows():
