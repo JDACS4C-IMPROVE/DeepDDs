@@ -98,11 +98,11 @@ def run(params: Dict):
         synergy_labels = [0, 1]
         y_data_stage['label'] = pd.cut(np.array(y_data_stage[params['y_col_name']]), bins=synergy_bins, labels=synergy_labels)
         # merge y_data with drug data
-        data = y_data_stage.merge(drugs_stage, how='inner', left_on=params['drug_1_column_name'], right_on='DrugID')
+        data = y_data_stage.merge(drugs_stage, how='inner', left_on=params['drug_1_col_name'], right_on='DrugID')
         data = data.rename(columns={'SMILES': 'drug1'})
-        data = data.merge(drugs_stage, how='inner', left_on=params['drug_2_column_name'], right_on='DrugID')
+        data = data.merge(drugs_stage, how='inner', left_on=params['drug_2_col_name'], right_on='DrugID')
         data = data.rename(columns={'SMILES': 'drug2'})
-        data = data.rename(columns={params['cell_column_name']: 'cell'})
+        data = data.rename(columns={params['canc_col_name']: 'cell'})
     
         cell_feature = np.array(omics_stage.reset_index())
         cell_feature = cell_feature.astype(str) # this might throw error 'features'
