@@ -114,8 +114,8 @@ def run(params: Dict):
 
         drug1_stage, drug2_stage, cell_stage, label_stage = np.asarray(list(data['drug1'])), np.asarray(list(data['drug2'])), np.asarray(list(data['cell'])), np.asarray(list(data['label']))
         print('开始创建数据 - Start creating data')
-        drug1_data_train = TestbedDataset(root=params['output_dir'], dataset='drug1_train', xd=drug1_stage, xt=cell_stage, xt_featrue=cell_feature, y=label_stage, smile_graph=smile_graph)
-        drug2_data_train = TestbedDataset(root=params['output_dir'], dataset='drug2_train', xd=drug2_stage, xt=cell_stage, xt_featrue=cell_feature, y=label_stage, smile_graph=smile_graph)
+        drug1_data_train = TestbedDataset(root=params['output_dir'], dataset=f"drug1_{stage}", xd=drug1_stage, xt=cell_stage, xt_featrue=cell_feature_for_TBD, y=label_stage, smile_graph=smile_graph)
+        drug2_data_train = TestbedDataset(root=params['output_dir'], dataset=f"drug2_{stage}", xd=drug2_stage, xt=cell_stage, xt_featrue=cell_feature_for_TBD, y=label_stage, smile_graph=smile_graph)
         print('创建数据成功 - Data created successfully')
         frm.save_stage_ydf(ydf=y_data_stage, stage=stage, output_dir=params["output_dir"])
 
