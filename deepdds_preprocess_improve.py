@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Dict
 # [Req] Core improvelib imports
 from improvelib.applications.synergy.config import SynergyPreprocessConfig
-import improvelib.applications.synergy.synergy_utils as syn
 import improvelib.utils as frm
 
 # Model-specific imports
