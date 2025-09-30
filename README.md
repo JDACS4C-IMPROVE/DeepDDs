@@ -2,58 +2,78 @@
 
 ---
 
-This is the IMPROVE implementation of the original model with original data.
+This repository demonstrates how to use the [IMPROVE library](https://jdacs4c-improve.github.io/docs/) for building a synergy prediction model using DeepDDS.
 
-## Dependencies and Installation
-### Conda Environment
+
+## Dependencies
+Installation instructions are detailed below in [Step-by-step instructions](#step-by-step-instructions).
+
+
+ML framework:
++ [PyTorch](https://pytorch.org/)
+
+IMPROVE dependencies:
++ [IMPROVE](https://github.com/JDACS4C-IMPROVE/IMPROVE)
+
+## Dataset
+Benchmark data for Synergy can be downloaded from this [site](https://web.cels.anl.gov/projects/IMPROVE_FTP/candle/public/improve/benchmarks/synergy_data_v0.2.0).
+
+
+
+# Step-by-step instructions
+
+### 1. Clone the model repository and checkout the develop branch (or tag of your choice)
+```bash
+git clone https://github.com/JDACS4C-IMPROVE/DeepDDs
+cd DeepDDs
+git checkout develop
 ```
+
+
+### 2. Set computational environment
+```bash
 conda create -n deepdds python pytorch-gpu scikit-learn pandas pytorch_geometric pytorch_scatter seaborn rdkit pyyaml
 conda activate deepdds
 ```
 
-### Clone this repository
-```
-git clone https://github.com/JDACS4C-IMPROVE/DeepDDs
-cd DeepDDs
-git checkout IMPROVE-original
-cd ..
-```
-
-### Clone IMPROVE repository v0.1.0
-```
-git clone https://github.com/JDACS4C-IMPROVE/IMPROVE
-cd IMPROVE
-git checkout develop
-cd ..
-```
-
-### Download Original Data
-Data is provided in the repo, under 'data'.
 
 
-## Running the Model
-Activate the conda environment:
-
-```
-conda activate deepdds
+### 4. Preprocess benchmark data to construct model input data 
+```bash
+python lgbmsynergy_preprocess_improve.py --input_dir ./synergy_data_v0.2.0 --output_dir exp_result
 ```
 
-Set environment variables:
-```
-export PYTHONPATH=$PYTHONPATH:/your/path/to/IMPROVE
-```
+Preprocesses the data and creates train, validation (val), and test datasets.
 
-Run preprocess, train, and infer scripts:
-```
-cd DeepDDs
-python deepdds_preprocess_improve.py --input_dir ./data/raw_data
-python deepdds_train_improve.py
-python deepdds_infer_improve.py
-```
-
-Note: the original implementation only splits the data into train and test, so the test split is used for both validation and testing here.
+Generates:
+* three model input data files: `train_data.parquet`, `val_data.parquet`, `test_data.parquet`
+* three tabular data files, each containing the synergy values and corresponding metadata: `train_y_data.csv`, `val_y_data.csv`, `test_y_data.csv`
 
 
+
+### 5. Train LightGBM model
+```bash
+python lgbmsynergy_train_improve.py --input_dir exp_result --output_dir exp_result
+```
+
+Trains a LightGBM model using the model input data: `train_data.parquet` (training), `val_data.parquet` (early stopping).
+
+Generates:
+* trained model: `model.txt`
+* predictions on val data (tabular data): `val_y_data_predicted.csv`
+* prediction performance scores on val data: `val_scores.json`
+
+
+### 6. Run inference on test data with the trained LightGBM model
+```bash
+python lgbmsynergy_infer_improve.py --input_data_dir exp_result --input_model_dir exp_result --output_dir exp_result --calc_infer_score true
+```
+
+Evaluates the performance on a test dataset with the trained model.
+
+Generates:
+* predictions on test data (tabular data): `test_y_data_predicted.csv`
+* prediction performance scores on test data: `test_scores.json`
 
 ## References
 
