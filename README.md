@@ -40,33 +40,33 @@ conda activate deepdds
 
 ### 4. Preprocess benchmark data to construct model input data 
 ```bash
-python lgbmsynergy_preprocess_improve.py --input_dir ./synergy_data_v0.2.0 --output_dir exp_result
+python deepdds_preprocess_improve.py --input_dir ./synergy_data_v0.2.0 --output_dir exp_result
 ```
 
 Preprocesses the data and creates train, validation (val), and test datasets.
 
 Generates:
-* three model input data files: `train_data.parquet`, `val_data.parquet`, `test_data.parquet`
+* three model input data files
 * three tabular data files, each containing the synergy values and corresponding metadata: `train_y_data.csv`, `val_y_data.csv`, `test_y_data.csv`
 
 
 
-### 5. Train LightGBM model
+### 5. Train model
 ```bash
-python lgbmsynergy_train_improve.py --input_dir exp_result --output_dir exp_result
+python deepdds_train_improve.py --input_dir exp_result --output_dir exp_result
 ```
 
-Trains a LightGBM model using the model input data: `train_data.parquet` (training), `val_data.parquet` (early stopping).
+Trains a model using the model input data.
 
 Generates:
-* trained model: `model.txt`
+* trained model
 * predictions on val data (tabular data): `val_y_data_predicted.csv`
 * prediction performance scores on val data: `val_scores.json`
 
 
-### 6. Run inference on test data with the trained LightGBM model
+### 6. Run inference on test data with the trained model
 ```bash
-python lgbmsynergy_infer_improve.py --input_data_dir exp_result --input_model_dir exp_result --output_dir exp_result --calc_infer_score true
+python deepdds_infer_improve.py --input_data_dir exp_result --input_model_dir exp_result --output_dir exp_result --calc_infer_score true
 ```
 
 Evaluates the performance on a test dataset with the trained model.
